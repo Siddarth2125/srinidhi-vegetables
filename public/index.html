@@ -3,112 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Srinidhi Admin</title>
+    <title>Srinidhi Vegetables</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f3f4f6; margin: 0; padding: 0; }
-        nav { background: #2c3e50; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { margin: 0; font-size: 20px; font-weight: 600; }
-        .reset-btn { background: #c0392b; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; }
-        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
-        .search-box { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; gap: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; }
-        .table-container { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; color: #666; font-size: 12px; text-transform: uppercase; }
-        .thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #eee; margin-right: 10px; vertical-align: middle; }
-        .fab-save { position: fixed; bottom: 30px; right: 30px; background: #27ae60; color: white; padding: 15px 30px; border-radius: 50px; font-size: 16px; font-weight: bold; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4); }
-        .fab-save:hover { transform: translateY(-2px); }
-        input[type="number"] { width: 70px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; font-weight: bold; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f8; margin: 0; padding-bottom: 100px; }
+        header { background: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        h1 { margin: 0; font-size: 24px; color: #2c3e50; font-weight: 800; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        input[type="text"] { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+        .card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 310px; position: relative; }
+        .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background-color: #f0f0f0; }
+        .name { font-size: 16px; font-weight: 700; color: #333; margin-bottom: 4px; height: 42px; overflow: hidden; line-height: 1.3; }
+        .unit { font-size: 13px; color: #777; font-weight: 500; margin-bottom: 4px; }
+        .price { color: #27ae60; font-size: 18px; font-weight: 800; margin-bottom: 10px; }
+        .add-btn { background: white; color: #27ae60; border: 2px solid #27ae60; padding: 8px; width: 100%; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; text-transform: uppercase; }
+        .add-btn:hover { background: #27ae60; color: white; }
+        .out-stock-card { opacity: 0.6; pointer-events: none; }
+        .out-stock-card img { filter: grayscale(100%); }
+        .badge { background: #e74c3c; color: white; padding: 4px 8px; font-size: 10px; border-radius: 4px; position: absolute; top: 10px; right: 10px; font-weight: bold; z-index: 10; }
+        .disabled-btn { background: #f3f3f3; color: #aaa; border: 1px solid #eee; cursor: not-allowed; padding: 8px; width: 100%; border-radius: 6px; font-weight: bold; font-size: 12px; }
+        .cart-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background-color: #27ae60; color: white; padding: 12px 20px; border-radius: 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 200; display: none; }
+        .cart-info { font-size: 15px; font-weight: 500; }
+        .cart-total { font-weight: 800; font-size: 18px; margin-left: 5px;}
+        .whatsapp-btn { background: white; color: #27ae60; border: none; padding: 10px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
-
-    <nav>
-        <h1>🥦 Srinidhi Vegetables Admin</h1>
-        <div>
-            <a href="/shop.html" target="_blank" style="color:white; margin-right:15px; text-decoration:none;">View Shop ↗</a>
-            <button class="reset-btn" onclick="resetDatabase()">⚠️ Fix Duplicates</button>
-        </div>
-    </nav>
-
+    <header><h1>🥦 Srinidhi Vegetables</h1></header>
     <div class="container">
-        <div class="search-box">
-            <input type="text" id="search-input" onkeyup="filterTable()" placeholder="🔍 Search vegetables...">
-        </div>
-        <div class="table-container">
-            <table>
-                <thead><tr><th>Product</th><th>Price (₹)</th><th>Stock</th></tr></thead>
-                <tbody id="veg-list"></tbody>
-            </table>
-        </div>
+        <input type="text" id="search" placeholder="🔍 Search vegetables..." onkeyup="renderShop()">
+        <div id="grid" class="grid"></div>
     </div>
-
-    <button class="fab-save" onclick="saveChanges()">💾 Save Changes</button>
-
+    <div id="cart-bar" class="cart-bar">
+        <div class="cart-info"><span id="item-count">0</span> Items | ₹<span id="total-price" class="cart-total">0</span></div>
+        <button class="whatsapp-btn" onclick="sendOrder()">Order 🚀</button>
+    </div>
     <script>
-        let allData = [];
-
-        async function loadVegetables() {
-            try {
-                const res = await fetch('/api/vegetables');
-                allData = await res.json();
-                renderTable(allData);
-            } catch(e) { alert("Server error. Run 'node server.js'"); }
+        let products = [], cart = {};
+        async function loadData() {
+            try { const res = await fetch('/api/vegetables'); products = await res.json(); renderShop(); } 
+            catch (err) { console.error(err); }
         }
-
-        function renderTable(data) {
-            const list = document.getElementById('veg-list');
-            list.innerHTML = data.map(veg => `
-                <tr data-id="${veg._id}">
-                    <td>
-                        <img src="${veg.imageUrl}" class="thumb">
-                        <b>${veg.name}</b>
-                    </td>
-                    <td>₹ <input type="number" class="price-input" value="${veg.price}"> / ${veg.unit}</td>
-                    <td><input type="checkbox" class="stock-input" ${veg.inStock ? 'checked' : ''}> In Stock</td>
-                </tr>
-            `).join('');
+        function renderShop() {
+            const grid = document.getElementById('grid');
+            const term = document.getElementById('search').value.toLowerCase();
+            grid.innerHTML = "";
+            products.forEach(item => {
+                if(!item.name.toLowerCase().includes(term)) return;
+                const safeImage = item.imageUrl || `https://placehold.co/400x300/e8f5e9/1b5e20.png?text=${item.name}`;
+                grid.innerHTML += `
+                    <div class="card ${!item.inStock ? 'out-stock-card' : ''}">
+                        ${!item.inStock ? '<span class="badge">Sold Out</span>' : ''}
+                        <img src="${safeImage}" alt="${item.name}">
+                        <div class="name">${item.name}</div>
+                        <div class="unit">1 ${item.unit}</div>
+                        <div class="price">₹${item.price}</div>
+                        ${item.inStock ? `<button class="add-btn" onclick="addToCart('${item.name}', ${item.price}, '${item.unit}')">ADD +</button>` : `<button class="disabled-btn">Out of Stock</button>`}
+                    </div>`;
+            });
         }
-
-        async function resetDatabase() {
-            if(!confirm("Are you sure? This will RESET all data.")) return;
-            const res = await fetch('/api/seed-products', { method: 'POST' });
-            const result = await res.json();
-            alert(result.message);
-            location.reload();
+        function addToCart(name, price, unit) {
+            if (!cart[name]) cart[name] = { price: price, unit: unit, qty: 1 };
+            else cart[name].qty++;
+            updateCartUI();
+            if (navigator.vibrate) navigator.vibrate(50);
         }
-
-        async function saveChanges() {
-            const saveBtn = document.querySelector('.fab-save');
-            saveBtn.innerHTML = "⏳ Saving...";
-            
-            const updates = Array.from(document.querySelectorAll('tr[data-id]')).map(row => ({
-                _id: row.getAttribute('data-id'),
-                price: Number(row.querySelector('.price-input').value),
-                inStock: row.querySelector('.stock-input').checked
-            }));
-
-            try {
-                await fetch('/api/vegetables/bulk-update', {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updates)
-                });
-                saveBtn.innerHTML = "✅ Saved!";
-                setTimeout(() => saveBtn.innerHTML = "💾 Save Changes", 2000);
-            } catch(e) { 
-                alert("Error saving."); 
-                saveBtn.innerHTML = "💾 Save Changes";
+        function updateCartUI() {
+            let totalItems = 0, totalPrice = 0;
+            for(let item in cart) { totalItems += cart[item].qty; totalPrice += cart[item].qty * cart[item].price; }
+            document.getElementById('item-count').innerText = totalItems;
+            document.getElementById('total-price').innerText = totalPrice;
+            document.getElementById('cart-bar').style.display = totalItems > 0 ? "flex" : "none";
+        }
+        function sendOrder() {
+            let message = "Hello Srinidhi Vegetables! 🥦\nI would like to place an order:\n\n", total = 0;
+            for (let name in cart) {
+                let item = cart[name];
+                let lineTotal = item.qty * item.price;
+                message += `▪️ ${name} (${item.qty} ${item.unit}) - ₹${lineTotal}\n`;
+                total += lineTotal;
             }
+            message += `\n*Total Bill: ₹${total}*`;
+            const phoneNumber = "919963169733"; 
+            window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
         }
-
-        function filterTable() {
-            const term = document.getElementById('search-input').value.toLowerCase();
-            renderTable(allData.filter(v => v.name.toLowerCase().includes(term)));
-        }
-
-        loadVegetables();
+        loadData();
     </script>
 </body>
 </html>

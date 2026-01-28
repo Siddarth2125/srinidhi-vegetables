@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Srinidhi Admin</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f3f4f6; display: none; } /* Hidden by default */
+        nav { background: #2c3e50; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { margin: 0; font-size: 20px; font-weight: 600; }
+        .reset-btn { background: #c0392b; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .search-box { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; gap: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; }
+        .table-container { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; color: #666; font-size: 12px; text-transform: uppercase; }
+        .thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #eee; margin-right: 10px; vertical-align: middle; }
+        .fab-save { position: fixed; bottom: 30px; right: 30px; background: #27ae60; color: white; padding: 15px 30px; border-radius: 50px; font-size: 16px; font-weight: bold; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4); }
+        input[type="number"] { width: 70px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>🔐 Admin Panel</h1>
+        <div>
+            <a href="/" target="_blank" style="color:white; margin-right:15px; text-decoration:none;">View Shop ↗</a>
+            <button class="reset-btn" onclick="resetDatabase()">⚠️ Fix DB</button>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="search-box"><input type="text" id="search-input" onkeyup="filterTable()" placeholder="🔍 Search vegetables..."></div>
+        <div class="table-container">
+            <table>
+                <thead><tr><th>Product</th><th>Price (₹)</th><th>Stock</th></tr></thead>
+                <tbody id="veg-list"></tbody>
+            </table>
+        </div>
+    </div>
+    <button class="fab-save" onclick="saveChanges()">💾 Save Changes</button>
+
+    <script>
+        // 🔒 SECURITY CHECK
+        const password = prompt("Enter Admin Password:");
+        if (password === "admin123") {
+            document.body.style.display = "block"; // Show page
+        } else {
+            alert("Wrong Password!");
+            window.location.href = "/"; // Send back to shop
+        }
+
+        let allData = [];
+        async function loadVegetables() {
+            try { const res = await fetch('/api/vegetables'); allData = await res.json(); renderTable(allData); } catch(e) {}
+        }
+        function renderTable(data) {
+            document.getElementById('veg-list').innerHTML = data.map(veg => `
+                <tr data-id="${veg._id}">
+                    <td><img src="${veg.imageUrl}" class="thumb"><b>${veg.name}</b></td>
+                    <td>₹ <input type="number" class="price-input" value="${veg.price}"> / ${veg.unit}</td>
+                    <td><input type="checkbox" class="stock-input" ${veg.inStock ? 'checked' : ''}> In Stock</td>
+                </tr>`).join('');
+        }
+        async function saveChanges() {
+            const updates = Array.from(document.querySelectorAll('tr[data-id]')).map(row => ({
+                _id: row.getAttribute('data-id'),
+                price: Number(row.querySelector('.price-input').value),
+                inStock: row.querySelector('.stock-input').checked
+            }));
+            await fetch('/api/vegetables/bulk-update', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updates) });
+            alert("Saved!");
+        }
+        async function resetDatabase() { if(confirm("Reset DB?")) await fetch('/api/seed-products', { method: 'POST' }); alert("Fixed!"); location.reload(); }
+        function filterTable() { const term = document.getElementById('search-input').value.toLowerCase(); renderTable(allData.filter(v => v.name.toLowerCase().includes(term))); }
+        loadVegetables();
+    </script>
+</body>
+</html>
