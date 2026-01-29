@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Srinidhi Vegetables</title>
     <style>
-        /* --- CSS STYLES --- */
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f8; margin: 0; padding-bottom: 100px; }
         header { background: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .header-content { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
@@ -21,6 +20,7 @@
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
         .card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 300px; position: relative; }
         
+        /* Consistent Box Size */
         .card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background-color: #f0f0f0; }
         .placeholder-box { width: 100%; height: 130px; background-color: #e8f5e9; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; color: #1b5e20; font-weight: 700; font-size: 18px; padding: 10px; box-sizing: border-box; }
 
@@ -59,7 +59,7 @@
 
     <header>
         <div class="header-content">
-            <h1>🥦 Srinidhi Foods</h1>
+            <h1>🥦 Srinidhi Vegetables</h1>
             <div class="cat-scroll">
                 <button class="cat-btn active" onclick="filterCat('All')">All</button>
                 <button class="cat-btn" onclick="filterCat('Vegetable')">Vegetables</button>
@@ -114,6 +114,8 @@
             try { 
                 const res = await fetch('/api/vegetables'); 
                 products = await res.json(); 
+                // 🔥 FIX: FORCE ALPHABETICAL ORDER
+                products.sort((a, b) => a.name.localeCompare(b.name));
                 renderShop(); 
             } catch (err) { console.error(err); }
         }
@@ -186,7 +188,6 @@
 
         function openCheckout() {
             document.getElementById('modal-overlay').style.display = 'flex';
-            // Reset UPI button style every time modal opens
             const btn = document.getElementById('btn-upi');
             btn.innerText = "⚡ Order & Pay via UPI";
             btn.style.backgroundColor = "#27ae60";
@@ -201,30 +202,23 @@
             
             if(!name || !address || !mobile) { alert("Please enter Name, Mobile, and Address!"); return; }
 
-            let message = `*New Order - Srinidhi Foods* 🥦\n👤 Name: ${name}\n📞 Mobile: ${mobile}\n🏠 Address: ${address}\n💳 Payment: ${mode}\n\n*Order Details:*\n`;
+            let message = `*New Order - Srinidhi Vegetables* 🥦\n👤 Name: ${name}\n📞 Mobile: ${mobile}\n🏠 Address: ${address}\n💳 Payment: ${mode}\n\n*Order Details:*\n`;
             let total = 0;
             for (let item in cart) { let line = cart[item].qty * cart[item].price; total += line; message += `▪️ ${item}: ${cart[item].qty} ${cart[item].unit} (₹${line})\n`; }
             message += `\n*Total Bill: ₹${Math.round(total)}*`;
 
             const phoneNumber = "919963169733"; 
-
-            // 1. OPEN WHATSAPP ALWAYS
             window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
 
-            // 2. IF UPI, CHANGE BUTTON TO "PAY NOW" (Does not auto-open to avoid blocks)
             if (mode === 'UPI') {
                 const btn = document.getElementById('btn-upi');
                 btn.innerText = "👉 Click HERE to Pay on GPay/PhonePe";
-                btn.style.backgroundColor = "#e67e22"; // Orange color
+                btn.style.backgroundColor = "#e67e22"; 
                 
-                // IMPORTANT: Replace YOUR UPI ID here!
                 const upiId = "9963169733@ybl"; 
-                const upiLink = `upi://pay?pa=${upiId}&pn=SrinidhiFoods&am=${Math.round(total)}&tn=Vegetables`;
+                const upiLink = `upi://pay?pa=${upiId}&pn=SrinidhiVegetables&am=${Math.round(total)}&tn=Vegetables`;
 
-                // Update button to open UPI link when clicked
-                btn.onclick = function() {
-                    window.location.href = upiLink;
-                };
+                btn.onclick = function() { window.location.href = upiLink; };
             } else {
                 closeCheckout();
             }
