@@ -5,53 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Srinidhi Vegetables</title>
     <style>
+        /* --- CSS STYLES --- */
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f8; margin: 0; padding-bottom: 100px; }
-        header { background: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
-        h1 { margin: 0; font-size: 24px; color: #2c3e50; font-weight: 800; }
+        header { background: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .header-content { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+        h1 { margin: 0; font-size: 22px; color: #2c3e50; font-weight: 800; display: flex; align-items: center; justify-content: space-between; }
+        
+        /* CATEGORY SCROLL BAR */
+        .cat-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .cat-btn { background: #eef2f3; border: 1px solid #ddd; padding: 8px 16px; border-radius: 20px; white-space: nowrap; font-weight: 600; color: #555; cursor: pointer; transition: 0.2s; }
+        .cat-btn.active { background: #27ae60; color: white; border-color: #27ae60; }
+
         .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
-        
-        input[type="text"] { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-        
-        .card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 320px; position: relative; }
-        .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background-color: #f0f0f0; }
-        .name { font-size: 16px; font-weight: 700; color: #333; margin-bottom: 4px; height: 42px; overflow: hidden; line-height: 1.3; }
-        .unit { font-size: 13px; color: #777; font-weight: 500; margin-bottom: 4px; }
-        .price { color: #27ae60; font-size: 18px; font-weight: 800; margin-bottom: 10px; }
+        /* PRODUCT GRID */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 300px; position: relative; }
+        .card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background-color: #f0f0f0; }
+        .name { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 4px; height: 40px; overflow: hidden; line-height: 1.3; }
+        .unit { font-size: 12px; color: #777; font-weight: 500; margin-bottom: 4px; }
+        .price { color: #27ae60; font-size: 17px; font-weight: 800; margin-bottom: 10px; }
 
-        .add-btn { background: white; color: #27ae60; border: 2px solid #27ae60; padding: 8px; width: 100%; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; text-transform: uppercase; }
+        /* BUTTONS */
+        .add-btn { background: white; color: #27ae60; border: 2px solid #27ae60; padding: 6px; width: 100%; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; text-transform: uppercase; }
         .add-btn:hover { background: #27ae60; color: white; }
         
         .qty-control { display: flex; align-items: center; justify-content: space-between; border: 2px solid #27ae60; border-radius: 6px; overflow: hidden; }
-        .qty-btn { background: #27ae60; color: white; border: none; padding: 8px 10px; font-weight: bold; cursor: pointer; font-size: 18px; width: 40px; }
-        .qty-val { font-weight: 800; color: #27ae60; font-size: 15px; }
+        .qty-btn { background: #27ae60; color: white; border: none; padding: 6px 12px; font-weight: bold; cursor: pointer; font-size: 18px; width: 35px; }
+        .qty-val { font-weight: 800; color: #27ae60; font-size: 14px; }
 
+        /* OUT OF STOCK */
         .out-stock-card { opacity: 0.6; pointer-events: none; }
         .out-stock-card img { filter: grayscale(100%); }
         .badge { background: #e74c3c; color: white; padding: 4px 8px; font-size: 10px; border-radius: 4px; position: absolute; top: 10px; right: 10px; font-weight: bold; z-index: 10; }
-        .disabled-btn { background: #f3f3f3; color: #aaa; border: 1px solid #eee; cursor: not-allowed; padding: 8px; width: 100%; border-radius: 6px; font-weight: bold; font-size: 12px; }
 
-        .cart-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background-color: #27ae60; color: white; padding: 12px 20px; border-radius: 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 200; display: none; }
-        .cart-info { font-size: 15px; font-weight: 500; }
-        .cart-total { font-weight: 800; font-size: 18px; margin-left: 5px;}
-        .whatsapp-btn { background: white; color: #27ae60; border: none; padding: 10px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        /* CART BAR */
+        .cart-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background-color: #27ae60; color: white; padding: 12px 20px; border-radius: 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 200; display: none; cursor: pointer; }
+        .cart-total { font-weight: 800; font-size: 18px; }
+
+        /* CHECKOUT MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 300; display: none; align-items: center; justify-content: center; }
+        .modal { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal h2 { margin-top: 0; color: #2c3e50; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        .pay-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; margin-bottom: 10px; }
+        .btn-cod { background: #2c3e50; color: white; }
+        .btn-upi { background: #27ae60; color: white; }
+        .close-modal { float: right; font-size: 24px; cursor: pointer; color: #aaa; }
     </style>
 </head>
 <body>
-    <header><h1>🥦 Srinidhi Vegetables</h1></header>
+
+    <header>
+        <div class="header-content">
+            <h1>🥦 Srinidhi Foods</h1>
+            <div class="cat-scroll">
+                <button class="cat-btn active" onclick="filterCat('All')">All</button>
+                <button class="cat-btn" onclick="filterCat('Vegetable')">Vegetables</button>
+                <button class="cat-btn" onclick="filterCat('Leafy')">Leafy</button>
+                <button class="cat-btn" onclick="filterCat('Fruit')">Fruits</button>
+                <button class="cat-btn" onclick="filterCat('Premium')">Premium</button>
+            </div>
+            <input type="text" id="search" placeholder="🔍 Search (e.g. Tomato)..." onkeyup="renderShop()">
+        </div>
+    </header>
+
     <div class="container">
-        <input type="text" id="search" placeholder="🔍 Search vegetables..." onkeyup="renderShop()">
         <div id="grid" class="grid"></div>
     </div>
-    <div id="cart-bar" class="cart-bar">
-        <div class="cart-info"><span id="item-count">0</span> Items | ₹<span id="total-price" class="cart-total">0</span></div>
-        <button class="whatsapp-btn" onclick="sendOrder()">Order 🚀</button>
+
+    <div id="cart-bar" class="cart-bar" onclick="openCheckout()">
+        <div><span id="item-count">0</span> Items</div>
+        <div class="cart-total">Check Out ₹<span id="total-price">0</span> ></div>
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <span class="close-modal" onclick="closeCheckout()">&times;</span>
+            <h2>Checkout 🛒</h2>
+            <div class="form-group">
+                <label>Your Name</label>
+                <input type="text" id="cust-name" placeholder="Enter name">
+            </div>
+            <div class="form-group">
+                <label>Delivery Address</label>
+                <textarea id="cust-address" rows="3" placeholder="Flat No, Street, Landmark..."></textarea>
+            </div>
+            <p><strong>Total to Pay: ₹<span id="modal-total">0</span></strong></p>
+            
+            <button class="pay-btn btn-upi" onclick="processOrder('UPI')">⚡ Pay via UPI (GPay/PhonePe)</button>
+            <button class="pay-btn btn-cod" onclick="processOrder('COD')">💵 Cash on Delivery</button>
+        </div>
     </div>
     
     <script>
         let products = [];
         let cart = {}; 
+        let activeCat = 'All';
 
         async function loadData() {
             try { 
@@ -61,8 +114,19 @@
             } catch (err) { console.error(err); }
         }
 
+        function filterCat(category) {
+            activeCat = category;
+            // Update button styles
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText === category || (category === 'All' && btn.innerText === 'All')) btn.classList.add('active');
+            });
+            renderShop();
+        }
+
         function getStep(unit) {
-            return unit === 'kg' ? 0.25 : 1;
+            // Logic: if unit is 'kg', step is 0.25. For 'piece', 'bunch', 'pack', step is 1.
+            return unit.toLowerCase() === 'kg' ? 0.25 : 1;
         }
 
         function renderShop() {
@@ -71,15 +135,22 @@
             grid.innerHTML = "";
 
             products.forEach(item => {
+                // Filter by Search
                 if(!item.name.toLowerCase().includes(term)) return;
                 
+                // Filter by Category (Assume item has 'category' field, else show in All)
+                if (activeCat !== 'All') {
+                    // Safety check: if item has no category, show only in All
+                    if (!item.category || item.category !== activeCat) return; 
+                }
+
                 const safeImage = item.imageUrl || `https://placehold.co/400x300/e8f5e9/1b5e20.png?text=${item.name}`;
                 const cartItem = cart[item.name]; 
                 const step = getStep(item.unit);
 
                 let buttonHTML = '';
                 if (!item.inStock) {
-                    buttonHTML = `<button class="disabled-btn">Out of Stock</button>`;
+                    buttonHTML = `<div style="font-size:12px; color:red; font-weight:bold;">Out of Stock</div>`;
                 } else if (cartItem) {
                     buttonHTML = `
                         <div class="qty-control">
@@ -97,8 +168,7 @@
                         ${!item.inStock ? '<span class="badge">Sold Out</span>' : ''}
                         <img src="${safeImage}" alt="${item.name}">
                         <div class="name">${item.name}</div>
-                        <div class="unit">1 ${item.unit}</div>
-                        <div class="price">₹${item.price}</div>
+                        <div class="unit">Price: ₹${item.price} / ${item.unit}</div>
                         ${buttonHTML}
                     </div>`;
             });
@@ -106,7 +176,7 @@
         }
 
         function addToCart(name, price, unit) {
-            const step = getStep(unit); 
+            const step = getStep(unit);
             cart[name] = { price: price, unit: unit, qty: step };
             if (navigator.vibrate) navigator.vibrate(50);
             renderShop();
@@ -115,47 +185,75 @@
         function updateQty(name, change) {
             if (cart[name]) {
                 let newQty = cart[name].qty + change;
-                newQty = Math.round(newQty * 100) / 100; // Fix decimals
+                newQty = Math.round(newQty * 100) / 100;
+                
+                // Max Limit 10 logic
+                if (newQty > 10) { alert("Max limit is 10!"); return; }
 
-                // 🔥 SECURITY CHECK: MAX LIMIT 10
-                if (newQty > 10) {
-                    alert(`Maximum limit is 10 ${cart[name].unit}!`);
-                    return; // Stop here
-                }
-
-                if (newQty <= 0) {
-                    delete cart[name];
-                } else {
-                    cart[name].qty = newQty;
-                }
+                if (newQty <= 0) delete cart[name];
+                else cart[name].qty = newQty;
             }
-            if (navigator.vibrate) navigator.vibrate(50);
             renderShop();
         }
 
         function updateCartBar() {
             let totalItems = 0, totalPrice = 0;
             for(let name in cart) { 
-                totalItems += 1; 
+                totalItems += 1;
                 totalPrice += cart[name].qty * cart[name].price; 
             }
             document.getElementById('item-count').innerText = totalItems;
             document.getElementById('total-price').innerText = Math.round(totalPrice);
+            document.getElementById('modal-total').innerText = Math.round(totalPrice);
             document.getElementById('cart-bar').style.display = totalItems > 0 ? "flex" : "none";
         }
 
-        function sendOrder() {
-            let message = "Hello Srinidhi Vegetables! 🥦\nI would like to place an order:\n\n", total = 0;
-            for (let name in cart) {
-                let item = cart[name];
-                let lineTotal = item.qty * item.price;
-                message += `▪️ ${name} (${item.qty} ${item.unit}) - ₹${lineTotal.toFixed(0)}\n`;
-                total += lineTotal;
-            }
-            message += `\n*Total Bill: ₹${total.toFixed(0)}*`;
+        // --- CHECKOUT LOGIC ---
+        function openCheckout() {
+            document.getElementById('modal-overlay').style.display = 'flex';
+        }
+        function closeCheckout() {
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+
+        function processOrder(mode) {
+            const name = document.getElementById('cust-name').value;
+            const address = document.getElementById('cust-address').value;
             
-            const phoneNumber = "919963169733"; 
-            window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+            if(!name || !address) {
+                alert("Please enter Name and Address!");
+                return;
+            }
+
+            let message = `*New Order - Srinidhi Foods* 🥦\n`;
+            message += `👤 Name: ${name}\n🏠 Address: ${address}\n`;
+            message += `💳 Payment: ${mode}\n\n*Order Details:*\n`;
+            
+            let total = 0;
+            for (let item in cart) {
+                let line = cart[item].qty * cart[item].price;
+                total += line;
+                message += `▪️ ${item}: ${cart[item].qty} ${cart[item].unit} (₹${line})\n`;
+            }
+            message += `\n*Total Bill: ₹${Math.round(total)}*`;
+
+            const phoneNumber = "919963169733"; // Your Number
+
+            if (mode === 'UPI') {
+                // Open UPI Intent (Works on Mobile)
+                const upiLink = `upi://pay?pa=YOUR_UPI_ID@okicici&pn=SrinidhiFoods&am=${total}&tn=Vegetables`;
+                
+                // Send WhatsApp first, then try to open UPI
+                window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+                
+                // Optional: Redirect to UPI after a delay (or user does it manually)
+                // location.href = upiLink; 
+            } else {
+                // COD - Just WhatsApp
+                window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+            }
+            
+            closeCheckout();
         }
 
         loadData();
