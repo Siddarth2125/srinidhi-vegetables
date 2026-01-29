@@ -22,7 +22,11 @@
         /* PRODUCT GRID */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
         .card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 300px; position: relative; }
+        
+        /* 🔥 FIXED GREEN BOX STYLE */
         .card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background-color: #f0f0f0; }
+        .placeholder-box { width: 100%; height: 130px; background-color: #e8f5e9; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; color: #1b5e20; font-weight: 700; font-size: 18px; padding: 10px; box-sizing: border-box; }
+
         .name { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 4px; height: 40px; overflow: hidden; line-height: 1.3; }
         .unit { font-size: 12px; color: #777; font-weight: 500; margin-bottom: 4px; }
         .price { color: #27ae60; font-size: 17px; font-weight: 800; margin-bottom: 10px; }
@@ -37,7 +41,7 @@
 
         /* OUT OF STOCK */
         .out-stock-card { opacity: 0.6; pointer-events: none; }
-        .out-stock-card img { filter: grayscale(100%); }
+        .out-stock-card img, .out-stock-card .placeholder-box { filter: grayscale(100%); }
         .badge { background: #e74c3c; color: white; padding: 4px 8px; font-size: 10px; border-radius: 4px; position: absolute; top: 10px; right: 10px; font-weight: bold; z-index: 10; }
 
         /* CART BAR */
@@ -46,7 +50,7 @@
 
         /* CHECKOUT MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 300; display: none; align-items: center; justify-content: center; }
-        .modal { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
         .modal h2 { margin-top: 0; color: #2c3e50; }
         .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; }
@@ -55,6 +59,8 @@
         .btn-cod { background: #2c3e50; color: white; }
         .btn-upi { background: #27ae60; color: white; }
         .close-modal { float: right; font-size: 24px; cursor: pointer; color: #aaa; }
+        
+        .empty-msg { text-align: center; color: #777; margin-top: 30px; font-size: 16px; grid-column: 1 / -1; }
     </style>
 </head>
 <body>
@@ -86,14 +92,22 @@
         <div class="modal">
             <span class="close-modal" onclick="closeCheckout()">&times;</span>
             <h2>Checkout 🛒</h2>
+            
             <div class="form-group">
                 <label>Your Name</label>
                 <input type="text" id="cust-name" placeholder="Enter name">
             </div>
+
+            <div class="form-group">
+                <label>Mobile Number</label>
+                <input type="tel" id="cust-mobile" placeholder="Enter 10-digit number" maxlength="10">
+            </div>
+
             <div class="form-group">
                 <label>Delivery Address</label>
                 <textarea id="cust-address" rows="3" placeholder="Flat No, Street, Landmark..."></textarea>
             </div>
+            
             <p><strong>Total to Pay: ₹<span id="modal-total">0</span></strong></p>
             
             <button class="pay-btn btn-upi" onclick="processOrder('UPI')">⚡ Pay via UPI (GPay/PhonePe)</button>
@@ -116,7 +130,6 @@
 
         function filterCat(category) {
             activeCat = category;
-            // Update button styles
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if(btn.innerText === category || (category === 'All' && btn.innerText === 'All')) btn.classList.add('active');
@@ -125,7 +138,6 @@
         }
 
         function getStep(unit) {
-            // Logic: if unit is 'kg', step is 0.25. For 'piece', 'bunch', 'pack', step is 1.
             return unit.toLowerCase() === 'kg' ? 0.25 : 1;
         }
 
@@ -134,17 +146,27 @@
             const term = document.getElementById('search').value.toLowerCase();
             grid.innerHTML = "";
 
+            let foundCount = 0;
+
             products.forEach(item => {
-                // Filter by Search
                 if(!item.name.toLowerCase().includes(term)) return;
                 
-                // Filter by Category (Assume item has 'category' field, else show in All)
+                // 🔥 Category Logic: If item has no category, it only shows in "All"
                 if (activeCat !== 'All') {
-                    // Safety check: if item has no category, show only in All
                     if (!item.category || item.category !== activeCat) return; 
                 }
 
-                const safeImage = item.imageUrl || `https://placehold.co/400x300/e8f5e9/1b5e20.png?text=${item.name}`;
+                foundCount++;
+
+                // 🔥 LOGIC: If image URL exists, show IMG. If not, show Styled Box.
+                let imageHTML = '';
+                if (item.imageUrl && item.imageUrl.trim() !== "") {
+                    imageHTML = `<img src="${item.imageUrl}" alt="${item.name}">`;
+                } else {
+                    // This box will always have consistent font size
+                    imageHTML = `<div class="placeholder-box">${item.name}</div>`;
+                }
+
                 const cartItem = cart[item.name]; 
                 const step = getStep(item.unit);
 
@@ -166,12 +188,17 @@
                 grid.innerHTML += `
                     <div class="card ${!item.inStock ? 'out-stock-card' : ''}">
                         ${!item.inStock ? '<span class="badge">Sold Out</span>' : ''}
-                        <img src="${safeImage}" alt="${item.name}">
+                        ${imageHTML}
                         <div class="name">${item.name}</div>
                         <div class="unit">Price: ₹${item.price} / ${item.unit}</div>
                         ${buttonHTML}
                     </div>`;
             });
+
+            if (foundCount === 0) {
+                grid.innerHTML = `<div class="empty-msg">No items found in "${activeCat}".<br>Please check Admin Panel categories.</div>`;
+            }
+            
             updateCartBar();
         }
 
@@ -186,10 +213,7 @@
             if (cart[name]) {
                 let newQty = cart[name].qty + change;
                 newQty = Math.round(newQty * 100) / 100;
-                
-                // Max Limit 10 logic
                 if (newQty > 10) { alert("Max limit is 10!"); return; }
-
                 if (newQty <= 0) delete cart[name];
                 else cart[name].qty = newQty;
             }
@@ -208,7 +232,6 @@
             document.getElementById('cart-bar').style.display = totalItems > 0 ? "flex" : "none";
         }
 
-        // --- CHECKOUT LOGIC ---
         function openCheckout() {
             document.getElementById('modal-overlay').style.display = 'flex';
         }
@@ -218,15 +241,17 @@
 
         function processOrder(mode) {
             const name = document.getElementById('cust-name').value;
+            const mobile = document.getElementById('cust-mobile').value;
             const address = document.getElementById('cust-address').value;
             
-            if(!name || !address) {
-                alert("Please enter Name and Address!");
+            if(!name || !address || !mobile) {
+                alert("Please enter Name, Mobile, and Address!");
                 return;
             }
 
+            // Create WhatsApp Message
             let message = `*New Order - Srinidhi Foods* 🥦\n`;
-            message += `👤 Name: ${name}\n🏠 Address: ${address}\n`;
+            message += `👤 Name: ${name}\n📞 Mobile: ${mobile}\n🏠 Address: ${address}\n`;
             message += `💳 Payment: ${mode}\n\n*Order Details:*\n`;
             
             let total = 0;
@@ -237,20 +262,21 @@
             }
             message += `\n*Total Bill: ₹${Math.round(total)}*`;
 
-            const phoneNumber = "919963169733"; // Your Number
+            const phoneNumber = "919963169733"; // Your WhatsApp Number
 
+            // 1. Open WhatsApp FIRST (Important so order is sent)
+            window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+
+            // 2. If UPI, try to open Payment App immediately after
             if (mode === 'UPI') {
-                // Open UPI Intent (Works on Mobile)
-                const upiLink = `upi://pay?pa=YOUR_UPI_ID@okicici&pn=SrinidhiFoods&am=${total}&tn=Vegetables`;
+                // YOUR UPI ID HERE
+                const upiId = "9963169733@ybl"; 
+                const upiLink = `upi://pay?pa=${upiId}&pn=SrinidhiFoods&am=${Math.round(total)}&tn=Vegetables`;
                 
-                // Send WhatsApp first, then try to open UPI
-                window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
-                
-                // Optional: Redirect to UPI after a delay (or user does it manually)
-                // location.href = upiLink; 
-            } else {
-                // COD - Just WhatsApp
-                window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+                // Small delay to let WhatsApp trigger first
+                setTimeout(() => {
+                    window.location.href = upiLink;
+                }, 1000);
             }
             
             closeCheckout();
