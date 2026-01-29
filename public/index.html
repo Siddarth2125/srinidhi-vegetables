@@ -20,8 +20,10 @@
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
         .card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 300px; position: relative; }
         
-        .card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background-color: #f0f0f0; }
-        .placeholder-box { width: 100%; height: 130px; background-color: #e8f5e9; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; color: #1b5e20; font-weight: 700; font-size: 18px; padding: 10px; box-sizing: border-box; }
+        .card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background-color: #f0f0f0; display: block; }
+        .card img.hidden { display: none; }
+        .placeholder-box { width: 100%; height: 130px; background-color: #e8f5e9; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; color: #1b5e20; font-weight: 700; font-size: 18px; padding: 10px; box-sizing: border-box; display: none; }
+        .placeholder-box.visible { display: flex; }
 
         .name { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 4px; height: 40px; overflow: hidden; line-height: 1.3; }
         .unit { font-size: 12px; color: #777; font-weight: 500; margin-bottom: 4px; }
@@ -58,7 +60,7 @@
 
     <header>
         <div class="header-content">
-            <h1>🥦 Srinidhi Vegetables</h1>
+            <h1><span id="header-emoji"></span> Srinidhi Vegetables</h1>
             <div class="cat-scroll">
                 <button class="cat-btn active" onclick="filterCat('All')">All</button>
                 <button class="cat-btn" onclick="filterCat('Vegetable')">Vegetables</button>
@@ -76,7 +78,7 @@
 
     <div id="cart-bar" class="cart-bar" onclick="openCheckout()">
         <div><span id="item-count">0</span> Items</div>
-        <div class="cart-total">Check Out ₹<span id="total-price">0</span> ></div>
+        <div class="cart-total">Check Out <span class="rupee-symbol"></span><span id="total-price">0</span> ></div>
     </div>
 
     <div id="modal-overlay" class="modal-overlay">
@@ -97,7 +99,7 @@
                 <textarea id="cust-address" rows="3" placeholder="Flat No, Street, Landmark..."></textarea>
             </div>
             
-            <p><strong>Total to Pay: ₹<span id="modal-total">0</span></strong></p>
+            <p><strong>Total to Pay: <span class="rupee-symbol"></span><span id="modal-total">0</span></strong></p>
             
             <button class="pay-btn btn-upi" id="btn-upi" onclick="processOrder('UPI')">⚡ Order & Pay via UPI</button>
             <button class="pay-btn btn-cod" onclick="processOrder('COD')">💵 Cash on Delivery</button>
@@ -105,63 +107,66 @@
     </div>
     
     <script>
+        // --- SAFE EMOJI LOADER ---
+        // We use JavaScript to inject Emojis so they don't break in file saving
+        document.getElementById('header-emoji').innerText = '\uD83E\uDD66'; // Broccoli
+        document.querySelectorAll('.rupee-symbol').forEach(el => el.innerText = '\u20B9'); // Rupee
+
         let products = [];
         let cart = {}; 
         let activeCat = 'All';
 
-        // 🔥 THE MASTER IMAGE LIST
-        // If the database has no image, the app will check this list!
         const staticImages = {
-            "Tomato": "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-            "Bangalore Tomato": "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-            "Onion": "https://upload.wikimedia.org/wikipedia/commons/2/25/Onion_on_White.JPG",
-            "Potato": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Patates.jpg",
-            "New Potato": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Patates.jpg",
-            "Green Chillies": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Green_chilli_peppers.jpg",
-            "Brinjal Black": "https://upload.wikimedia.org/wikipedia/commons/7/76/Solanum_melongena_24_08_2012_%281%29.JPG",
-            "Brinjal White": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/White_eggplant_1.jpg/800px-White_eggplant_1.jpg",
-            "Brinjal Long": "https://upload.wikimedia.org/wikipedia/commons/7/76/Solanum_melongena_24_08_2012_%281%29.JPG",
-            "Lady Finger": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Okra_at_market_in_Little_India%2C_Singapore.jpg",
-            "Bottle Gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Calabash_squash_2006.jpg/640px-Calabash_squash_2006.jpg",
-            "Ridge Gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Luffa_acutangula_02.jpg/640px-Luffa_acutangula_02.jpg",
-            "Bitter Gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Momordica_charantia_at_Pampanga_Market.jpg/640px-Momordica_charantia_at_Pampanga_Market.jpg",
-            "Snake Gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Snake_gourd.jpg/640px-Snake_gourd.jpg",
-            "Cucumber (Keera)": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ars_Cucumber.jpg/640px-Ars_Cucumber.jpg",
-            "Capsicum Green": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Green_Capsicum.jpg/640px-Green_Capsicum.jpg",
-            "Capsicum Red": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Pepper_bell_red.jpg/640px-Pepper_bell_red.jpg",
-            "Capsicum Yellow": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Yellow_Capsicum.jpg/640px-Yellow_Capsicum.jpg",
-            "Radish": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/White_radish.jpg/640px-White_radish.jpg",
-            "Carrot": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Carrots_at_market.jpg/640px-Carrots_at_market.jpg",
-            "Red Carrot": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Carrots_at_market.jpg/640px-Carrots_at_market.jpg",
-            "Beetroot": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Beetroot_jm26647.jpg/640px-Beetroot_jm26647.jpg",
-            "Cauliflower": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Cauliflower.JPG/640px-Cauliflower.JPG",
-            "Cabbage": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Cabbage_and_cross_section_on_white.jpg/640px-Cabbage_and_cross_section_on_white.jpg",
-            "Sweet Potato": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Ipomoea_batatas_006.JPG/640px-Ipomoea_batatas_006.JPG",
-            "Ginger": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Ginger.jpg/640px-Ginger.jpg",
-            "Garlic": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Garlic_bulbs_and_cloves.jpg/640px-Garlic_bulbs_and_cloves.jpg",
-            "Lemon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Lemon.jpg/640px-Lemon.jpg",
-            "Raw Banana": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Green_Bananas.jpg/640px-Green_Bananas.jpg",
-            "Dondakaya (Ivy Gourd)": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Coccinia_grandis_fruit.jpg/640px-Coccinia_grandis_fruit.jpg",
-            "Drumstick": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Moringa_oleifera_pods.jpg/640px-Moringa_oleifera_pods.jpg",
-            "Spinach (Palak)": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Spinacia_oleracea_Spinach.jpg/640px-Spinacia_oleracea_Spinach.jpg",
-            "Coriander": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Coriander_leaves.jpg/640px-Coriander_leaves.jpg",
-            "Curry leaves": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Curry_leaves_Murraya_koenigii.jpg/640px-Curry_leaves_Murraya_koenigii.jpg",
-            "Mint (Pudeena)": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Mint_leaves.jpg/640px-Mint_leaves.jpg",
-            "Sweet Corn (Peeled)": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Corn_cobs.jpg/640px-Corn_cobs.jpg",
-            "Baby Corn": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Baby_corn_stir_fry.jpg/640px-Baby_corn_stir_fry.jpg",
-            "Eggs": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Chicken_egg_2009-06-04.jpg/640px-Chicken_egg_2009-06-04.jpg",
-            "Coconut": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Coconuts_at_Hainan.jpg/640px-Coconuts_at_Hainan.jpg",
-            "Peeled Garlic": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Garlic_bulbs_and_cloves.jpg/640px-Garlic_bulbs_and_cloves.jpg",
-            "Green Peas (Hara Matar)": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Peas_in_pods_-_Studio.jpg/640px-Peas_in_pods_-_Studio.jpg",
-            "Papaya": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Papaya_cross_section_BNC.jpg/640px-Papaya_cross_section_BNC.jpg",
-            "Watermelon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg/640px-Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg",
-            "Normal Banana": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Single.jpg/640px-Banana-Single.jpg",
-            "Apple": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/640px-Red_Apple.jpg",
-            "Pineapple": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Pineapple_and_cross_section.jpg/640px-Pineapple_and_cross_section.jpg",
-            "Broccoli": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Broccoli_and_cross_section_edit.jpg/640px-Broccoli_and_cross_section_edit.jpg",
-            "Zucchini": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ars_Cucumber.jpg/640px-Ars_Cucumber.jpg",
-            "Lettuce Iceberg": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Iceberg_lettuce_in_SB.jpg/640px-Iceberg_lettuce_in_SB.jpg",
-            "Mushroom": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Champignon_mushroom.jpg/640px-Champignon_mushroom.jpg"
+            "tomato": "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+            "bangalore tomato": "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+            "onion": "https://upload.wikimedia.org/wikipedia/commons/2/25/Onion_on_White.JPG",
+            "potato": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Patates.jpg",
+            "new potato": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Patates.jpg",
+            "green chillies": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Green_chilli_peppers.jpg",
+            "brinjal black": "https://upload.wikimedia.org/wikipedia/commons/7/76/Solanum_melongena_24_08_2012_%281%29.JPG",
+            "brinjal white": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/White_eggplant_1.jpg/800px-White_eggplant_1.jpg",
+            "brinjal long": "https://upload.wikimedia.org/wikipedia/commons/7/76/Solanum_melongena_24_08_2012_%281%29.JPG",
+            "lady finger": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Okra_at_market_in_Little_India%2C_Singapore.jpg",
+            "bottle gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Calabash_squash_2006.jpg/640px-Calabash_squash_2006.jpg",
+            "ridge gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Luffa_acutangula_02.jpg/640px-Luffa_acutangula_02.jpg",
+            "bitter gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Momordica_charantia_at_Pampanga_Market.jpg/640px-Momordica_charantia_at_Pampanga_Market.jpg",
+            "snake gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Snake_gourd.jpg/640px-Snake_gourd.jpg",
+            "cucumber (keera)": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ars_Cucumber.jpg/640px-Ars_Cucumber.jpg",
+            "capsicum green": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Green_Capsicum.jpg/640px-Green_Capsicum.jpg",
+            "capsicum red": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Pepper_bell_red.jpg/640px-Pepper_bell_red.jpg",
+            "capsicum yellow": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Yellow_Capsicum.jpg/640px-Yellow_Capsicum.jpg",
+            "radish": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/White_radish.jpg/640px-White_radish.jpg",
+            "carrot": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Carrots_at_market.jpg/640px-Carrots_at_market.jpg",
+            "red carrot": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Carrots_at_market.jpg/640px-Carrots_at_market.jpg",
+            "beetroot": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Beetroot_jm26647.jpg/640px-Beetroot_jm26647.jpg",
+            "cauliflower": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Cauliflower.JPG/640px-Cauliflower.JPG",
+            "cabbage": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Cabbage_and_cross_section_on_white.jpg/640px-Cabbage_and_cross_section_on_white.jpg",
+            "sweet potato": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Ipomoea_batatas_006.JPG/640px-Ipomoea_batatas_006.JPG",
+            "ginger": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Ginger.jpg/640px-Ginger.jpg",
+            "garlic": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Garlic_bulbs_and_cloves.jpg/640px-Garlic_bulbs_and_cloves.jpg",
+            "lemon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Lemon.jpg/640px-Lemon.jpg",
+            "raw banana": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Green_Bananas.jpg/640px-Green_Bananas.jpg",
+            "dondakaya (ivy gourd)": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Coccinia_grandis_fruit.jpg/640px-Coccinia_grandis_fruit.jpg",
+            "drumstick": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Moringa_oleifera_pods.jpg/640px-Moringa_oleifera_pods.jpg",
+            "spinach (palak)": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Spinacia_oleracea_Spinach.jpg/640px-Spinacia_oleracea_Spinach.jpg",
+            "coriander": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Coriander_leaves.jpg/640px-Coriander_leaves.jpg",
+            "curry leaves": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Curry_leaves_Murraya_koenigii.jpg/640px-Curry_leaves_Murraya_koenigii.jpg",
+            "mint (pudeena)": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Mint_leaves.jpg/640px-Mint_leaves.jpg",
+            "sweet corn (peeled)": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Corn_cobs.jpg/640px-Corn_cobs.jpg",
+            "baby corn": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Baby_corn_stir_fry.jpg/640px-Baby_corn_stir_fry.jpg",
+            "eggs": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Chicken_egg_2009-06-04.jpg/640px-Chicken_egg_2009-06-04.jpg",
+            "coconut": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Coconuts_at_Hainan.jpg/640px-Coconuts_at_Hainan.jpg",
+            "peeled garlic": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Garlic_bulbs_and_cloves.jpg/640px-Garlic_bulbs_and_cloves.jpg",
+            "green peas (hara matar)": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Peas_in_pods_-_Studio.jpg/640px-Peas_in_pods_-_Studio.jpg",
+            "papaya": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Papaya_cross_section_BNC.jpg/640px-Papaya_cross_section_BNC.jpg",
+            "watermelon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg/640px-Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg",
+            "normal banana": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Single.jpg/640px-Banana-Single.jpg",
+            "apple": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/640px-Red_Apple.jpg",
+            "pineapple": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Pineapple_and_cross_section.jpg/640px-Pineapple_and_cross_section.jpg",
+            "broccoli": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Broccoli_and_cross_section_edit.jpg/640px-Broccoli_and_cross_section_edit.jpg",
+            "zucchini": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ars_Cucumber.jpg/640px-Ars_Cucumber.jpg",
+            "lettuce iceberg": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Iceberg_lettuce_in_SB.jpg/640px-Iceberg_lettuce_in_SB.jpg",
+            "mushroom": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Champignon_mushroom.jpg/640px-Champignon_mushroom.jpg"
         };
 
         async function loadData() {
@@ -197,17 +202,18 @@
                 if (activeCat !== 'All' && (!item.category || item.category !== activeCat)) return; 
                 foundCount++;
 
-                // 🔥 LOGIC: DB Image -> Master List -> Green Box
+                let searchName = item.name.toLowerCase().trim();
                 let imageSrc = "";
                 if (item.imageUrl && item.imageUrl.trim() !== "") {
                     imageSrc = item.imageUrl;
-                } else if (staticImages[item.name]) {
-                    imageSrc = staticImages[item.name];
+                } else if (staticImages[searchName]) { 
+                    imageSrc = staticImages[searchName];
                 }
 
                 let imageHTML = imageSrc 
-                    ? `<img src="${imageSrc}" alt="${item.name}">` 
-                    : `<div class="placeholder-box">${item.name}</div>`;
+                    ? `<img src="${imageSrc}" alt="${item.name}" onerror="this.style.display='none'; this.nextElementSibling.classList.add('visible');">
+                       <div class="placeholder-box">${item.name}</div>` 
+                    : `<div class="placeholder-box visible">${item.name}</div>`;
 
                 const cartItem = cart[item.name]; 
                 const step = getStep(item.unit);
@@ -215,7 +221,7 @@
                     : cartItem ? `<div class="qty-control"><button class="qty-btn" onclick="updateQty('${item.name}', -${step})">-</button><span class="qty-val">${cartItem.qty} ${item.unit}</span><button class="qty-btn" onclick="updateQty('${item.name}', ${step})">+</button></div>`
                     : `<button class="add-btn" onclick="addToCart('${item.name}', ${item.price}, '${item.unit}')">ADD +</button>`;
 
-                grid.innerHTML += `<div class="card ${!item.inStock ? 'out-stock-card' : ''}">${!item.inStock ? '<span class="badge">Sold Out</span>' : ''}${imageHTML}<div class="name">${item.name}</div><div class="unit">Price: ₹${item.price} / ${item.unit}</div>${buttonHTML}</div>`;
+                grid.innerHTML += `<div class="card ${!item.inStock ? 'out-stock-card' : ''}">${!item.inStock ? '<span class="badge">Sold Out</span>' : ''}${imageHTML}<div class="name">${item.name}</div><div class="unit">Price: \u20B9${item.price} / ${item.unit}</div>${buttonHTML}</div>`;
             });
 
             if (foundCount === 0) grid.innerHTML = `<div class="empty-msg">No items found in "${activeCat}".<br>Please check Admin Panel categories.</div>`;
@@ -256,7 +262,7 @@
         }
         function closeCheckout() { document.getElementById('modal-overlay').style.display = 'none'; }
 
-        // 🔥 SAFE MODE ORDER FUNCTION
+        // 🔥 THE UNICODE MESSAGE GENERATOR (SAFE EMOJIS)
         function processOrder(mode) {
             const name = document.getElementById('cust-name').value;
             const mobile = document.getElementById('cust-mobile').value;
@@ -264,14 +270,29 @@
             
             if(!name || !address || !mobile) { alert("Please enter Name, Mobile, and Address!"); return; }
 
-            let message = `*NEW ORDER - Srinidhi Vegetables*\n----------------------------\nName: ${name}\nMobile: ${mobile}\nAddress: ${address}\nPayment: ${mode}\n----------------------------\n*ORDER DETAILS:*\n`;
+            // Using UNICODE characters for Bold (*), Broccoli, etc. to prevent file corruption
+            const BROCCOLI = '\uD83E\uDD66';
+            const USER = '\uD83D\uDC64';
+            const PHONE = '\uD83D\uDCDE';
+            const HOUSE = '\uD83C\uDFE0';
+            const CARD = '\uD83D\uDCB3';
+            const DOT = '\u25AA\uFE0F';
+            const RUPEE = '\u20B9';
+
+            let message = `*New Order - Srinidhi Vegetables* ${BROCCOLI}\n`;
+            message += `${USER} Name: ${name}\n`;
+            message += `${PHONE} Mobile: ${mobile}\n`;
+            message += `${HOUSE} Address: ${address}\n`;
+            message += `${CARD} Payment: ${mode}\n\n`;
+            message += `*Order Details:*\n`;
+            
             let total = 0;
             for (let item in cart) {
                 let line = cart[item].qty * cart[item].price;
                 total += line;
-                message += `- ${item}: ${cart[item].qty} ${cart[item].unit} (Rs. ${line})\n`;
+                message += `${DOT} ${item}: ${cart[item].qty} ${cart[item].unit} (${RUPEE}${line})\n`;
             }
-            message += `\n*TOTAL BILL: Rs. ${Math.round(total)}*`;
+            message += `\n*Total Bill: ${RUPEE}${Math.round(total)}*`;
 
             const phoneNumber = "919963169733"; 
             window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
