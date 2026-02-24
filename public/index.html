@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Srinidhi Vegetables</title>
+    <title>Srinidhi Vegetables - E-Commerce</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f8; margin: 0; padding-bottom: 100px; }
         header { background: white; padding: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .header-content { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
-        h1 { margin: 0; font-size: 22px; color: #2c3e50; font-weight: 800; display: flex; align-items: center; justify-content: space-between; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; }
+        h1 { margin: 0; font-size: 22px; color: #2c3e50; font-weight: 800; }
+        
+        /* User Profile Button */
+        .auth-btn { background: #2c3e50; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 14px; }
         
         .cat-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .cat-btn { background: #eef2f3; border: 1px solid #ddd; padding: 8px 16px; border-radius: 20px; white-space: nowrap; font-weight: 600; color: #555; cursor: pointer; transition: 0.2s; }
@@ -19,19 +23,14 @@
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
         .card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 300px; position: relative; }
-        
         .card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background-color: #f0f0f0; display: block; }
-        .card img.hidden { display: none; }
         .placeholder-box { width: 100%; height: 130px; background-color: #e8f5e9; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; color: #1b5e20; font-weight: 700; font-size: 18px; padding: 10px; box-sizing: border-box; display: none; }
         .placeholder-box.visible { display: flex; }
-
         .name { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 4px; height: 40px; overflow: hidden; line-height: 1.3; }
         .unit { font-size: 12px; color: #777; font-weight: 500; margin-bottom: 4px; }
         .price { color: #27ae60; font-size: 17px; font-weight: 800; margin-bottom: 10px; }
 
         .add-btn { background: white; color: #27ae60; border: 2px solid #27ae60; padding: 6px; width: 100%; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; text-transform: uppercase; }
-        .add-btn:hover { background: #27ae60; color: white; }
-        
         .qty-control { display: flex; align-items: center; justify-content: space-between; border: 2px solid #27ae60; border-radius: 6px; overflow: hidden; }
         .qty-btn { background: #27ae60; color: white; border: none; padding: 6px 12px; font-weight: bold; cursor: pointer; font-size: 18px; width: 35px; }
         .qty-val { font-weight: 800; color: #27ae60; font-size: 14px; }
@@ -43,24 +42,35 @@
         .cart-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background-color: #27ae60; color: white; padding: 12px 20px; border-radius: 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 200; display: none; cursor: pointer; }
         .cart-total { font-weight: 800; font-size: 18px; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 300; display: none; align-items: center; justify-content: center; }
-        .modal { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+        /* Floating Customer Care */
+        .float-wa { position: fixed; bottom: 20px; left: 20px; background-color: #25D366; color: white; padding: 12px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 200; display: flex; align-items: center; gap: 5px; font-size: 14px; }
+
+        /* Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; display: none; align-items: center; justify-content: center; }
+        .modal { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 85vh; overflow-y: auto; position: relative; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #aaa; }
         .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; }
         .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        
-        .pay-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; margin-bottom: 10px; }
-        .btn-cod { background: #2c3e50; color: white; }
-        .btn-upi { background: #27ae60; color: white; transition: 0.3s; }
-        .close-modal { float: right; font-size: 24px; cursor: pointer; color: #aaa; }
-        .empty-msg { text-align: center; color: #777; margin-top: 30px; font-size: 16px; grid-column: 1 / -1; }
+        .pay-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; margin-bottom: 10px; color: white; background: #27ae60; }
+        .pay-btn.cod { background: #2c3e50; }
+
+        /* Order History Styles */
+        .order-card { border: 1px solid #eee; padding: 15px; border-radius: 10px; margin-bottom: 15px; background: #fdfdfd; }
+        .order-status { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
+        .status-Pending { background: #f39c12; color: white; }
+        .status-Packed { background: #3498db; color: white; }
+        .status-Delivered { background: #27ae60; color: white; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="header-content">
-            <h1><span id="header-emoji"></span> Srinidhi Vegetables</h1>
+            <div class="top-bar">
+                <h1>🥦 Srinidhi Vegetables</h1>
+                <button class="auth-btn" id="auth-btn" onclick="openLoginModal()">Login</button>
+            </div>
             <div class="cat-scroll">
                 <button class="cat-btn active" onclick="filterCat('All')">All</button>
                 <button class="cat-btn" onclick="filterCat('Vegetable')">Vegetables</button>
@@ -76,100 +86,129 @@
         <div id="grid" class="grid"></div>
     </div>
 
-    <div id="cart-bar" class="cart-bar" onclick="openCheckout()">
+    <a href="https://wa.me/919963169733" class="float-wa" target="_blank">📞 Support</a>
+
+    <div id="cart-bar" class="cart-bar" onclick="openCheckoutModal()">
         <div><span id="item-count">0</span> Items</div>
-        <div class="cart-total">Check Out <span class="rupee-symbol"></span><span id="total-price">0</span> ></div>
+        <div class="cart-total">Place Order ₹<span id="total-price">0</span> ></div>
     </div>
 
-    <div id="modal-overlay" class="modal-overlay">
+    <div id="login-modal" class="modal-overlay">
         <div class="modal">
-            <span class="close-modal" onclick="closeCheckout()">&times;</span>
-            <h2>Checkout 🛒</h2>
-            
+            <span class="close-modal" onclick="closeModal('login-modal')">&times;</span>
+            <h2>Sign In / Register</h2>
+            <p style="font-size: 14px; color: #666;">Create an account to save your address and track orders.</p>
             <div class="form-group">
-                <label>Your Name</label>
-                <input type="text" id="cust-name" placeholder="Enter name">
+                <label>Mobile Number (10 digits)</label>
+                <input type="tel" id="reg-phone" placeholder="Enter mobile number">
             </div>
             <div class="form-group">
-                <label>Mobile Number</label>
-                <input type="tel" id="cust-mobile" placeholder="Enter 10-digit number" maxlength="10">
+                <label>Full Name</label>
+                <input type="text" id="reg-name" placeholder="Enter your name">
             </div>
             <div class="form-group">
                 <label>Delivery Address</label>
-                <textarea id="cust-address" rows="3" placeholder="Flat No, Street, Landmark..."></textarea>
+                <textarea id="reg-address" rows="3" placeholder="House No, Area, Landmark"></textarea>
             </div>
-            
-            <p><strong>Total to Pay: <span class="rupee-symbol"></span><span id="modal-total">0</span></strong></p>
-            
-            <button class="pay-btn btn-upi" id="btn-upi" onclick="processOrder('UPI')">⚡ Order & Pay via UPI</button>
-            <button class="pay-btn btn-cod" onclick="processOrder('COD')">💵 Cash on Delivery</button>
+            <button class="pay-btn" onclick="handleLogin()">Save & Continue</button>
+        </div>
+    </div>
+
+    <div id="checkout-modal" class="modal-overlay">
+        <div class="modal">
+            <span class="close-modal" onclick="closeModal('checkout-modal')">&times;</span>
+            <h2>Confirm Order 🛒</h2>
+            <div style="background: #eef2f3; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 14px;">
+                <strong>Deliver To:</strong><br>
+                <span id="confirm-name"></span> (<span id="confirm-phone"></span>)<br>
+                <span id="confirm-address"></span><br>
+                <a href="#" onclick="closeModal('checkout-modal'); openLoginModal();" style="color: #2980b9;">Change Address</a>
+            </div>
+            <p><strong>Total Bill: ₹<span id="modal-total">0</span></strong></p>
+            <button class="pay-btn" onclick="submitOrder('UPI')">⚡ Pay via UPI (GPay/PhonePe)</button>
+            <button class="pay-btn cod" onclick="submitOrder('COD')">💵 Cash on Delivery</button>
+        </div>
+    </div>
+
+    <div id="orders-modal" class="modal-overlay">
+        <div class="modal" style="max-width: 500px;">
+            <span class="close-modal" onclick="closeModal('orders-modal')">&times;</span>
+            <h2>My Orders</h2>
+            <button onclick="logout()" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; float: right; margin-top: -40px;">Logout</button>
+            <div id="orders-list" style="margin-top: 20px;">Loading orders...</div>
         </div>
     </div>
     
     <script>
-        // --- SAFE EMOJI LOADER ---
-        // We use JavaScript to inject Emojis so they don't break in file saving
-        document.getElementById('header-emoji').innerText = '\uD83E\uDD66'; // Broccoli
-        document.querySelectorAll('.rupee-symbol').forEach(el => el.innerText = '\u20B9'); // Rupee
-
         let products = [];
         let cart = {}; 
         let activeCat = 'All';
+        let currentUser = JSON.parse(localStorage.getItem('srinidhiUser')) || null;
 
+        // Image Master List
         const staticImages = {
             "tomato": "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-            "bangalore tomato": "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
             "onion": "https://upload.wikimedia.org/wikipedia/commons/2/25/Onion_on_White.JPG",
             "potato": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Patates.jpg",
-            "new potato": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Patates.jpg",
             "green chillies": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Green_chilli_peppers.jpg",
-            "brinjal black": "https://upload.wikimedia.org/wikipedia/commons/7/76/Solanum_melongena_24_08_2012_%281%29.JPG",
-            "brinjal white": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/White_eggplant_1.jpg/800px-White_eggplant_1.jpg",
-            "brinjal long": "https://upload.wikimedia.org/wikipedia/commons/7/76/Solanum_melongena_24_08_2012_%281%29.JPG",
-            "lady finger": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Okra_at_market_in_Little_India%2C_Singapore.jpg",
-            "bottle gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Calabash_squash_2006.jpg/640px-Calabash_squash_2006.jpg",
-            "ridge gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Luffa_acutangula_02.jpg/640px-Luffa_acutangula_02.jpg",
-            "bitter gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Momordica_charantia_at_Pampanga_Market.jpg/640px-Momordica_charantia_at_Pampanga_Market.jpg",
-            "snake gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Snake_gourd.jpg/640px-Snake_gourd.jpg",
-            "cucumber (keera)": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ars_Cucumber.jpg/640px-Ars_Cucumber.jpg",
-            "capsicum green": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Green_Capsicum.jpg/640px-Green_Capsicum.jpg",
-            "capsicum red": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Pepper_bell_red.jpg/640px-Pepper_bell_red.jpg",
-            "capsicum yellow": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Yellow_Capsicum.jpg/640px-Yellow_Capsicum.jpg",
-            "radish": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/White_radish.jpg/640px-White_radish.jpg",
+            "apple": "https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg",
+            "broccoli": "https://upload.wikimedia.org/wikipedia/commons/0/03/Broccoli_and_cross_section_edit.jpg",
             "carrot": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Carrots_at_market.jpg/640px-Carrots_at_market.jpg",
-            "red carrot": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Carrots_at_market.jpg/640px-Carrots_at_market.jpg",
-            "beetroot": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Beetroot_jm26647.jpg/640px-Beetroot_jm26647.jpg",
-            "cauliflower": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Cauliflower.JPG/640px-Cauliflower.JPG",
-            "cabbage": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Cabbage_and_cross_section_on_white.jpg/640px-Cabbage_and_cross_section_on_white.jpg",
-            "sweet potato": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Ipomoea_batatas_006.JPG/640px-Ipomoea_batatas_006.JPG",
-            "ginger": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Ginger.jpg/640px-Ginger.jpg",
-            "garlic": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Garlic_bulbs_and_cloves.jpg/640px-Garlic_bulbs_and_cloves.jpg",
-            "lemon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Lemon.jpg/640px-Lemon.jpg",
-            "raw banana": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Green_Bananas.jpg/640px-Green_Bananas.jpg",
-            "dondakaya (ivy gourd)": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Coccinia_grandis_fruit.jpg/640px-Coccinia_grandis_fruit.jpg",
-            "drumstick": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Moringa_oleifera_pods.jpg/640px-Moringa_oleifera_pods.jpg",
-            "spinach (palak)": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Spinacia_oleracea_Spinach.jpg/640px-Spinacia_oleracea_Spinach.jpg",
-            "coriander": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Coriander_leaves.jpg/640px-Coriander_leaves.jpg",
-            "curry leaves": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Curry_leaves_Murraya_koenigii.jpg/640px-Curry_leaves_Murraya_koenigii.jpg",
-            "mint (pudeena)": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Mint_leaves.jpg/640px-Mint_leaves.jpg",
-            "sweet corn (peeled)": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Corn_cobs.jpg/640px-Corn_cobs.jpg",
-            "baby corn": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Baby_corn_stir_fry.jpg/640px-Baby_corn_stir_fry.jpg",
-            "eggs": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Chicken_egg_2009-06-04.jpg/640px-Chicken_egg_2009-06-04.jpg",
-            "coconut": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Coconuts_at_Hainan.jpg/640px-Coconuts_at_Hainan.jpg",
-            "peeled garlic": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Garlic_bulbs_and_cloves.jpg/640px-Garlic_bulbs_and_cloves.jpg",
-            "green peas (hara matar)": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Peas_in_pods_-_Studio.jpg/640px-Peas_in_pods_-_Studio.jpg",
-            "papaya": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Papaya_cross_section_BNC.jpg/640px-Papaya_cross_section_BNC.jpg",
-            "watermelon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg/640px-Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg",
-            "normal banana": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Single.jpg/640px-Banana-Single.jpg",
-            "apple": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/640px-Red_Apple.jpg",
-            "pineapple": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Pineapple_and_cross_section.jpg/640px-Pineapple_and_cross_section.jpg",
-            "broccoli": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Broccoli_and_cross_section_edit.jpg/640px-Broccoli_and_cross_section_edit.jpg",
-            "zucchini": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ars_Cucumber.jpg/640px-Ars_Cucumber.jpg",
-            "lettuce iceberg": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Iceberg_lettuce_in_SB.jpg/640px-Iceberg_lettuce_in_SB.jpg",
-            "mushroom": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Champignon_mushroom.jpg/640px-Champignon_mushroom.jpg"
+            "spinach (palak)": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Spinacia_oleracea_Spinach.jpg/640px-Spinacia_oleracea_Spinach.jpg"
         };
 
+        // --- AUTH LOGIC ---
+        function checkAuthUI() {
+            const authBtn = document.getElementById('auth-btn');
+            if (currentUser) {
+                authBtn.innerText = "👤 My Orders";
+                authBtn.onclick = openMyOrders;
+            } else {
+                authBtn.innerText = "Login";
+                authBtn.onclick = openLoginModal;
+            }
+        }
+
+        function openLoginModal() {
+            if (currentUser) {
+                document.getElementById('reg-phone').value = currentUser.phone;
+                document.getElementById('reg-name').value = currentUser.name;
+                document.getElementById('reg-address').value = currentUser.address;
+            }
+            document.getElementById('login-modal').style.display = 'flex';
+        }
+
+        async function handleLogin() {
+            const phone = document.getElementById('reg-phone').value;
+            const name = document.getElementById('reg-name').value;
+            const address = document.getElementById('reg-address').value;
+            if(!phone || !name || !address) { alert("Please fill all details!"); return; }
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, name, address })
+                });
+                const data = await res.json();
+                localStorage.setItem('srinidhiUser', JSON.stringify(data.user));
+                currentUser = data.user;
+                checkAuthUI();
+                closeModal('login-modal');
+                alert("Profile Saved!");
+            } catch(e) { alert("Error saving profile"); }
+        }
+
+        function logout() {
+            localStorage.removeItem('srinidhiUser');
+            currentUser = null;
+            checkAuthUI();
+            closeModal('orders-modal');
+        }
+
+        // --- SHOP & CART LOGIC ---
         async function loadData() {
+            checkAuthUI();
             try { 
                 const res = await fetch('/api/vegetables'); 
                 products = await res.json(); 
@@ -187,28 +226,17 @@
             renderShop();
         }
 
-        function getStep(unit) {
-            return unit.toLowerCase() === 'kg' ? 0.25 : 1;
-        }
-
         function renderShop() {
             const grid = document.getElementById('grid');
             const term = document.getElementById('search').value.toLowerCase();
             grid.innerHTML = "";
-            let foundCount = 0;
 
             products.forEach(item => {
                 if(!item.name.toLowerCase().includes(term)) return;
                 if (activeCat !== 'All' && (!item.category || item.category !== activeCat)) return; 
-                foundCount++;
 
                 let searchName = item.name.toLowerCase().trim();
-                let imageSrc = "";
-                if (item.imageUrl && item.imageUrl.trim() !== "") {
-                    imageSrc = item.imageUrl;
-                } else if (staticImages[searchName]) { 
-                    imageSrc = staticImages[searchName];
-                }
+                let imageSrc = item.imageUrl || staticImages[searchName] || "";
 
                 let imageHTML = imageSrc 
                     ? `<img src="${imageSrc}" alt="${item.name}" onerror="this.style.display='none'; this.nextElementSibling.classList.add('visible');">
@@ -216,99 +244,109 @@
                     : `<div class="placeholder-box visible">${item.name}</div>`;
 
                 const cartItem = cart[item.name]; 
-                const step = getStep(item.unit);
+                const step = item.unit.toLowerCase() === 'kg' ? 0.25 : 1;
+                
                 let buttonHTML = !item.inStock ? `<div style="font-size:12px; color:red; font-weight:bold;">Out of Stock</div>` 
                     : cartItem ? `<div class="qty-control"><button class="qty-btn" onclick="updateQty('${item.name}', -${step})">-</button><span class="qty-val">${cartItem.qty} ${item.unit}</span><button class="qty-btn" onclick="updateQty('${item.name}', ${step})">+</button></div>`
-                    : `<button class="add-btn" onclick="addToCart('${item.name}', ${item.price}, '${item.unit}')">ADD +</button>`;
+                    : `<button class="add-btn" onclick="addToCart('${item.name}', ${item.price}, '${item.unit}', ${step})">ADD +</button>`;
 
-                grid.innerHTML += `<div class="card ${!item.inStock ? 'out-stock-card' : ''}">${!item.inStock ? '<span class="badge">Sold Out</span>' : ''}${imageHTML}<div class="name">${item.name}</div><div class="unit">Price: \u20B9${item.price} / ${item.unit}</div>${buttonHTML}</div>`;
+                grid.innerHTML += `<div class="card ${!item.inStock ? 'out-stock-card' : ''}">${!item.inStock ? '<span class="badge">Sold Out</span>' : ''}${imageHTML}<div class="name">${item.name}</div><div class="unit">Price: ₹${item.price} / ${item.unit}</div>${buttonHTML}</div>`;
             });
-
-            if (foundCount === 0) grid.innerHTML = `<div class="empty-msg">No items found in "${activeCat}".<br>Please check Admin Panel categories.</div>`;
             updateCartBar();
         }
 
-        function addToCart(name, price, unit) {
-            const step = getStep(unit);
-            cart[name] = { price: price, unit: unit, qty: step };
-            if (navigator.vibrate) navigator.vibrate(50);
+        function addToCart(name, price, unit, step) {
+            cart[name] = { price, unit, qty: step };
             renderShop();
         }
 
         function updateQty(name, change) {
-            if (cart[name]) {
-                let newQty = Math.round((cart[name].qty + change) * 100) / 100;
-                if (newQty > 10) { alert("Max limit is 10!"); return; }
-                if (newQty <= 0) delete cart[name]; else cart[name].qty = newQty;
-            }
+            let newQty = Math.round((cart[name].qty + change) * 100) / 100;
+            if (newQty <= 0) delete cart[name]; else cart[name].qty = newQty;
             renderShop();
         }
 
         function updateCartBar() {
             let totalItems = 0, totalPrice = 0;
-            for(let name in cart) { totalItems += 1; totalPrice += cart[name].qty * cart[name].price; }
+            for(let name in cart) { totalItems++; totalPrice += cart[name].qty * cart[name].price; }
             document.getElementById('item-count').innerText = totalItems;
             document.getElementById('total-price').innerText = Math.round(totalPrice);
             document.getElementById('modal-total').innerText = Math.round(totalPrice);
             document.getElementById('cart-bar').style.display = totalItems > 0 ? "flex" : "none";
         }
 
-        function openCheckout() {
-            document.getElementById('modal-overlay').style.display = 'flex';
-            const btn = document.getElementById('btn-upi');
-            btn.innerText = "⚡ Order & Pay via UPI";
-            btn.style.backgroundColor = "#27ae60";
-            btn.onclick = function() { processOrder('UPI'); };
+        function openCheckoutModal() {
+            if(!currentUser) {
+                openLoginModal();
+                return;
+            }
+            document.getElementById('confirm-name').innerText = currentUser.name;
+            document.getElementById('confirm-phone').innerText = currentUser.phone;
+            document.getElementById('confirm-address').innerText = currentUser.address;
+            document.getElementById('checkout-modal').style.display = 'flex';
         }
-        function closeCheckout() { document.getElementById('modal-overlay').style.display = 'none'; }
 
-        // 🔥 THE UNICODE MESSAGE GENERATOR (SAFE EMOJIS)
-        function processOrder(mode) {
-            const name = document.getElementById('cust-name').value;
-            const mobile = document.getElementById('cust-mobile').value;
-            const address = document.getElementById('cust-address').value;
-            
-            if(!name || !address || !mobile) { alert("Please enter Name, Mobile, and Address!"); return; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-            // Using UNICODE characters for Bold (*), Broccoli, etc. to prevent file corruption
-            const BROCCOLI = '\uD83E\uDD66';
-            const USER = '\uD83D\uDC64';
-            const PHONE = '\uD83D\uDCDE';
-            const HOUSE = '\uD83C\uDFE0';
-            const CARD = '\uD83D\uDCB3';
-            const DOT = '\u25AA\uFE0F';
-            const RUPEE = '\u20B9';
-
-            let message = `*New Order - Srinidhi Vegetables* ${BROCCOLI}\n`;
-            message += `${USER} Name: ${name}\n`;
-            message += `${PHONE} Mobile: ${mobile}\n`;
-            message += `${HOUSE} Address: ${address}\n`;
-            message += `${CARD} Payment: ${mode}\n\n`;
-            message += `*Order Details:*\n`;
-            
+        // --- DATABASE ORDERING LOGIC ---
+        async function submitOrder(mode) {
             let total = 0;
-            for (let item in cart) {
-                let line = cart[item].qty * cart[item].price;
-                total += line;
-                message += `${DOT} ${item}: ${cart[item].qty} ${cart[item].unit} (${RUPEE}${line})\n`;
-            }
-            message += `\n*Total Bill: ${RUPEE}${Math.round(total)}*`;
+            const itemsArray = Object.keys(cart).map(name => {
+                total += cart[name].qty * cart[name].price;
+                return { name: name, qty: cart[name].qty, unit: cart[name].unit, price: cart[name].price };
+            });
 
-            const phoneNumber = "919963169733"; 
-            window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+            const orderData = {
+                customerName: currentUser.name,
+                customerPhone: currentUser.phone,
+                customerAddress: currentUser.address,
+                items: itemsArray,
+                totalAmount: Math.round(total),
+                paymentMode: mode
+            };
 
-            if (mode === 'UPI') {
-                const btn = document.getElementById('btn-upi');
-                btn.innerText = "👉 Click HERE to Pay on GPay/PhonePe";
-                btn.style.backgroundColor = "#e67e22"; 
+            try {
+                const res = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
                 
-                const upiId = "9963169733@ybl"; 
-                const upiLink = `upi://pay?pa=${upiId}&pn=SrinidhiVegetables&am=${Math.round(total)}&tn=Vegetables`;
+                if(res.ok) {
+                    if (mode === 'UPI') {
+                        // Open UPI Link immediately
+                        const upiId = "9963169733@ybl"; 
+                        window.location.href = `upi://pay?pa=${upiId}&pn=SrinidhiVegetables&am=${orderData.totalAmount}&tn=Order`;
+                    }
+                    alert("✅ Order Placed Successfully! You can track it in 'My Orders'.");
+                    cart = {}; // Empty cart
+                    closeModal('checkout-modal');
+                    renderShop();
+                }
+            } catch(e) { alert("Error placing order. Please try again."); }
+        }
 
-                btn.onclick = function() { window.location.href = upiLink; };
-            } else {
-                closeCheckout();
-            }
+        async function openMyOrders() {
+            document.getElementById('orders-modal').style.display = 'flex';
+            const list = document.getElementById('orders-list');
+            list.innerHTML = "Fetching your orders...";
+            try {
+                const res = await fetch(`/api/orders/my/${currentUser.phone}`);
+                const orders = await res.json();
+                
+                if(orders.length === 0) { list.innerHTML = "<p>You haven't placed any orders yet.</p>"; return; }
+
+                list.innerHTML = orders.map(o => `
+                    <div class="order-card">
+                        <div class="order-status status-${o.status}">${o.status}</div>
+                        <div style="font-size:12px; color:#777;">Order Date: ${new Date(o.orderDate).toLocaleString()}</div>
+                        <div style="margin: 10px 0; font-size:14px;">
+                            ${o.items.map(i => `<div>${i.name} - ${i.qty} ${i.unit}</div>`).join('')}
+                        </div>
+                        <div style="font-weight:bold; color:#27ae60;">Total: ₹${o.totalAmount} (${o.paymentMode})</div>
+                    </div>
+                `).join('');
+            } catch(e) { list.innerHTML = "Failed to load orders."; }
         }
 
         loadData();

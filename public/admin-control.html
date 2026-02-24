@@ -3,101 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Srinidhi Vegetables</title>
+    <title>Admin - Srinidhi Retail</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f3f4f6; display: none; padding-bottom: 80px; margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f3f4f6; margin: 0; padding-bottom: 50px; display: none; }
         nav { background: #2c3e50; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         h1 { margin: 0; font-size: 20px; font-weight: 600; }
-        .reset-btn { background: #c0392b; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        
+        .tabs { display: flex; background: white; border-bottom: 2px solid #ddd; padding: 0 20px; }
+        .tab-btn { padding: 15px 30px; background: none; border: none; font-size: 16px; font-weight: bold; color: #777; cursor: pointer; border-bottom: 3px solid transparent; }
+        .tab-btn.active { color: #27ae60; border-bottom-color: #27ae60; }
+        
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
         
-        .search-box { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; gap: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
-        
-        .table-container { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; vertical-align: middle; font-size: 14px; }
-        th { background: #f8f9fa; color: #666; font-size: 13px; text-transform: uppercase; font-weight: 700; }
-        
-        /* IMAGE & BOX */
-        .thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #eee; margin-right: 10px; vertical-align: middle; }
-        .thumb-box { display: inline-block; width: 40px; height: 40px; background: #e8f5e9; color: #1b5e20; border-radius: 4px; margin-right: 10px; text-align: center; line-height: 40px; font-weight: bold; font-size: 10px; vertical-align: middle; overflow: hidden; }
+        /* Stats Card */
+        .stats-card { background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .stats-card h3 { margin: 0 0 5px 0; font-size: 16px; opacity: 0.9; }
+        .stats-card h2 { margin: 0; font-size: 32px; }
 
-        /* INPUTS */
-        input[type="number"] { width: 70px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-weight: bold; }
-        select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; background: white; cursor: pointer; min-width: 100px; }
+        /* Tables */
+        .table-container { background: white; border-radius: 10px; overflow: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+        th { background: #f8f9fa; color: #666; font-size: 13px; text-transform: uppercase; }
         
-        .fab-save { position: fixed; bottom: 30px; right: 30px; background: #27ae60; color: white; padding: 15px 30px; border-radius: 50px; font-size: 16px; font-weight: bold; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4); transition: 0.2s; }
-        .fab-save:hover { transform: scale(1.05); background: #219150; }
+        /* Order Badges */
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; color: white; border: none; cursor: pointer; }
+        .badge-Pending { background: #f39c12; }
+        .badge-Packed { background: #3498db; }
+        .badge-Delivered { background: #27ae60; }
+        
+        .fab-save { position: fixed; bottom: 30px; right: 30px; background: #2c3e50; color: white; padding: 15px 30px; border-radius: 50px; font-size: 16px; font-weight: bold; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        input[type="number"] { width: 70px; padding: 5px; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
     <nav>
-        <h1>🔐 Admin Control</h1>
-        <div>
-            <a href="/" target="_blank" style="color:white; margin-right:15px; text-decoration:none;">View Shop ↗</a>
-            <button class="reset-btn" onclick="resetDatabase()">⚠️ Fix DB</button>
-        </div>
+        <h1>🔐 Admin Dashboard</h1>
+        <a href="/" target="_blank" style="color:white; text-decoration:none;">View Live Shop ↗</a>
     </nav>
 
-    <div class="container">
-        <div class="search-box">
-            <input type="text" id="search-input" onkeyup="filterTable()" placeholder="🔍 Search vegetables (A-Z)...">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('orders')">Live Orders</button>
+        <button class="tab-btn" onclick="switchTab('inventory')">Manage Inventory</button>
+    </div>
+
+    <div id="view-orders" class="container">
+        <div class="stats-card">
+            <h3>Today's Total Sales</h3>
+            <h2 id="today-sales">₹0</h2>
         </div>
+        <button onclick="loadOrders()" style="margin-bottom:15px; padding:8px 15px; cursor:pointer;">🔄 Refresh Orders</button>
         
-        <div class="table-container" style="overflow-x:auto;">
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 25%">Product Name</th>
-                        <th style="width: 20%">Category</th>
-                        <th style="width: 15%">Unit Type</th>
-                        <th style="width: 20%">Price (₹)</th>
-                        <th style="width: 20%">Stock Status</th>
+                        <th>Date & Time</th>
+                        <th>Customer Details</th>
+                        <th>Order Items</th>
+                        <th>Total & Pay</th>
+                        <th>Action (Click to Update)</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-list"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="view-inventory" class="container" style="display:none;">
+        <input type="text" id="search-input" onkeyup="filterTable()" placeholder="🔍 Search inventory..." style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:5px;">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price (₹)</th>
+                        <th>Stock Status</th>
                     </tr>
                 </thead>
                 <tbody id="veg-list"></tbody>
             </table>
         </div>
+        <button class="fab-save" onclick="saveInventory()">💾 Save Inventory</button>
     </div>
-
-    <button class="fab-save" onclick="saveChanges()">💾 Save Changes</button>
 
     <script>
         // 🔒 SECURITY CHECK
-        const password = prompt("Enter Admin Password:");
-        if (password === "admin123") {
+        if (prompt("Enter Admin Password:") === "admin123") {
             document.body.style.display = "block"; 
+            loadOrders();
+            loadVegetables();
         } else {
-            alert("Wrong Password!");
             window.location.href = "/"; 
         }
 
-        let allData = [];
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if(tab === 'orders') {
+                document.getElementById('view-orders').style.display = 'block';
+                document.getElementById('view-inventory').style.display = 'none';
+                loadOrders();
+            } else {
+                document.getElementById('view-orders').style.display = 'none';
+                document.getElementById('view-inventory').style.display = 'block';
+            }
+        }
 
+        // --- ORDERS LOGIC ---
+        async function loadOrders() {
+            const res = await fetch('/api/admin/orders');
+            const orders = await res.json();
+            
+            // Calculate Today's Sales
+            const today = new Date().setHours(0,0,0,0);
+            const todaySales = orders
+                .filter(o => new Date(o.orderDate) >= today && o.status !== 'Pending') // Count if packed/delivered
+                .reduce((sum, o) => sum + o.totalAmount, 0);
+            document.getElementById('today-sales').innerText = `₹${todaySales}`;
+
+            const list = document.getElementById('orders-list');
+            list.innerHTML = orders.map(o => {
+                const itemsStr = o.items.map(i => `${i.name} (${i.qty} ${i.unit})`).join('<br>');
+                const dateStr = new Date(o.orderDate).toLocaleString();
+                
+                // Logic to click badge to next status
+                let nextStatus = o.status === 'Pending' ? 'Packed' : (o.status === 'Packed' ? 'Delivered' : 'Pending');
+                
+                return `
+                <tr>
+                    <td><small>${dateStr}</small></td>
+                    <td><b>${o.customerName}</b><br>📞 ${o.customerPhone}<br><small>${o.customerAddress}</small></td>
+                    <td style="font-size:12px;">${itemsStr}</td>
+                    <td><b>₹${o.totalAmount}</b><br><small>${o.paymentMode}</small></td>
+                    <td>
+                        <button class="badge badge-${o.status}" onclick="updateOrderStatus('${o._id}', '${nextStatus}')">
+                            ${o.status} 🔀
+                        </button>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        async function updateOrderStatus(id, newStatus) {
+            await fetch(`/api/admin/orders/${id}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
+            loadOrders(); // Refresh table
+        }
+
+        // --- INVENTORY LOGIC ---
+        let allData = [];
         async function loadVegetables() {
-            try { 
-                const res = await fetch('/api/vegetables'); 
-                allData = await res.json(); 
-                
-                // 🔥 FIX: FORCE ALPHABETICAL ORDER (A-Z)
-                allData.sort((a, b) => a.name.localeCompare(b.name));
-                
-                renderTable(allData); 
-            } catch(e) { console.error(e); }
+            const res = await fetch('/api/vegetables'); 
+            allData = await res.json(); 
+            allData.sort((a, b) => a.name.localeCompare(b.name));
+            renderTable(allData); 
         }
 
         function renderTable(data) {
-            const list = document.getElementById('veg-list');
-            list.innerHTML = data.map(veg => {
-                // Show Image OR Show Green Box if no image
-                let imgHTML = veg.imageUrl ? `<img src="${veg.imageUrl}" class="thumb">` : `<span class="thumb-box">${veg.name.substring(0,2)}</span>`;
-
-                return `
+            document.getElementById('veg-list').innerHTML = data.map(veg => `
                 <tr data-id="${veg._id}">
-                    <td>
-                        ${imgHTML} <b>${veg.name}</b>
-                    </td>
+                    <td><b>${veg.name}</b></td>
                     <td>
                         <select class="cat-select">
                             <option value="Vegetable" ${veg.category === 'Vegetable' ? 'selected' : ''}>Vegetable</option>
@@ -106,65 +177,27 @@
                             <option value="Premium" ${veg.category === 'Premium' ? 'selected' : ''}>Premium</option>
                         </select>
                     </td>
-                    <td>
-                        <select class="unit-select">
-                            <option value="kg" ${veg.unit === 'kg' ? 'selected' : ''}>kg</option>
-                            <option value="piece" ${veg.unit === 'piece' ? 'selected' : ''}>piece</option>
-                            <option value="bunch" ${veg.unit === 'bunch' ? 'selected' : ''}>bunch</option>
-                            <option value="pack" ${veg.unit === 'pack' ? 'selected' : ''}>pack</option>
-                        </select>
-                    </td>
-                    <td>
-                        ₹ <input type="number" class="price-input" value="${veg.price}">
-                    </td>
-                    <td>
-                        <input type="checkbox" class="stock-input" ${veg.inStock ? 'checked' : ''}> Available
-                    </td>
+                    <td>₹ <input type="number" class="price-input" value="${veg.price}"></td>
+                    <td><input type="checkbox" class="stock-input" ${veg.inStock ? 'checked' : ''}> Available</td>
                 </tr>
-            `}).join('');
+            `).join('');
         }
 
-        async function saveChanges() {
-            const saveBtn = document.querySelector('.fab-save');
-            saveBtn.innerText = "Saving...";
-            
+        async function saveInventory() {
             const updates = Array.from(document.querySelectorAll('tr[data-id]')).map(row => ({
                 _id: row.getAttribute('data-id'),
                 price: Number(row.querySelector('.price-input').value),
                 inStock: row.querySelector('.stock-input').checked,
-                category: row.querySelector('.cat-select').value,
-                unit: row.querySelector('.unit-select').value
+                category: row.querySelector('.cat-select').value
             }));
-
-            try {
-                await fetch('/api/vegetables/bulk-update', { 
-                    method: 'PATCH', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify(updates) 
-                });
-                alert("✅ Changes Saved! Items are now sorted A-Z.");
-                saveBtn.innerText = "💾 Save Changes";
-                loadVegetables(); // Reload to confirm order
-            } catch (err) {
-                alert("Error saving data");
-                saveBtn.innerText = "❌ Error";
-            }
-        }
-
-        async function resetDatabase() { 
-            if(confirm("Reset DB? This will delete custom categories!")) {
-                await fetch('/api/seed-products', { method: 'POST' }); 
-                alert("Reset Complete"); 
-                location.reload(); 
-            }
+            await fetch('/api/vegetables/bulk-update', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updates) });
+            alert("Inventory Saved!");
         }
 
         function filterTable() { 
             const term = document.getElementById('search-input').value.toLowerCase(); 
             renderTable(allData.filter(v => v.name.toLowerCase().includes(term))); 
         }
-
-        loadVegetables();
     </script>
 </body>
 </html>
