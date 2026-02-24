@@ -68,7 +68,7 @@
     <header>
         <div class="header-content">
             <div class="top-bar">
-                <h1>🥦 Srinidhi Vegetables</h1>
+                <h1><span id="header-emoji"></span> Srinidhi Vegetables</h1>
                 <button class="auth-btn" id="auth-btn" onclick="openLoginModal()">Login</button>
             </div>
             <div class="cat-scroll">
@@ -90,7 +90,7 @@
 
     <div id="cart-bar" class="cart-bar" onclick="openCheckoutModal()">
         <div><span id="item-count">0</span> Items</div>
-        <div class="cart-total">Place Order ₹<span id="total-price">0</span> ></div>
+        <div class="cart-total">Place Order <span class="rupee-symbol"></span><span id="total-price">0</span> ></div>
     </div>
 
     <div id="login-modal" class="modal-overlay">
@@ -124,8 +124,8 @@
                 <span id="confirm-address"></span><br>
                 <a href="#" onclick="closeModal('checkout-modal'); openLoginModal();" style="color: #2980b9;">Change Address</a>
             </div>
-            <p><strong>Total Bill: ₹<span id="modal-total">0</span></strong></p>
-            <button class="pay-btn" onclick="submitOrder('UPI')">⚡ Pay via UPI (GPay/PhonePe)</button>
+            <p><strong>Total Bill: <span class="rupee-symbol"></span><span id="modal-total">0</span></strong></p>
+            <button class="pay-btn" id="btn-upi" onclick="submitOrder('UPI')">⚡ Pay via UPI (GPay/PhonePe)</button>
             <button class="pay-btn cod" onclick="submitOrder('COD')">💵 Cash on Delivery</button>
         </div>
     </div>
@@ -140,6 +140,10 @@
     </div>
     
     <script>
+        // Inject safe Emojis
+        document.getElementById('header-emoji').innerText = '\uD83E\uDD66'; // Broccoli
+        document.querySelectorAll('.rupee-symbol').forEach(el => el.innerText = '\u20B9'); // Rupee
+
         let products = [];
         let cart = {}; 
         let activeCat = 'All';
@@ -148,13 +152,55 @@
         // Image Master List
         const staticImages = {
             "tomato": "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+            "bangalore tomato": "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
             "onion": "https://upload.wikimedia.org/wikipedia/commons/2/25/Onion_on_White.JPG",
             "potato": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Patates.jpg",
+            "new potato": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Patates.jpg",
             "green chillies": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Green_chilli_peppers.jpg",
-            "apple": "https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg",
-            "broccoli": "https://upload.wikimedia.org/wikipedia/commons/0/03/Broccoli_and_cross_section_edit.jpg",
+            "brinjal black": "https://upload.wikimedia.org/wikipedia/commons/7/76/Solanum_melongena_24_08_2012_%281%29.JPG",
+            "brinjal white": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/White_eggplant_1.jpg/800px-White_eggplant_1.jpg",
+            "brinjal long": "https://upload.wikimedia.org/wikipedia/commons/7/76/Solanum_melongena_24_08_2012_%281%29.JPG",
+            "lady finger": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Okra_at_market_in_Little_India%2C_Singapore.jpg",
+            "bottle gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Calabash_squash_2006.jpg/640px-Calabash_squash_2006.jpg",
+            "ridge gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Luffa_acutangula_02.jpg/640px-Luffa_acutangula_02.jpg",
+            "bitter gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Momordica_charantia_at_Pampanga_Market.jpg/640px-Momordica_charantia_at_Pampanga_Market.jpg",
+            "snake gourd": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Snake_gourd.jpg/640px-Snake_gourd.jpg",
+            "cucumber (keera)": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ars_Cucumber.jpg/640px-Ars_Cucumber.jpg",
+            "capsicum green": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Green_Capsicum.jpg/640px-Green_Capsicum.jpg",
+            "capsicum red": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Pepper_bell_red.jpg/640px-Pepper_bell_red.jpg",
+            "capsicum yellow": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Yellow_Capsicum.jpg/640px-Yellow_Capsicum.jpg",
+            "radish": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/White_radish.jpg/640px-White_radish.jpg",
             "carrot": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Carrots_at_market.jpg/640px-Carrots_at_market.jpg",
-            "spinach (palak)": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Spinacia_oleracea_Spinach.jpg/640px-Spinacia_oleracea_Spinach.jpg"
+            "red carrot": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Carrots_at_market.jpg/640px-Carrots_at_market.jpg",
+            "beetroot": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Beetroot_jm26647.jpg/640px-Beetroot_jm26647.jpg",
+            "cauliflower": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Cauliflower.JPG/640px-Cauliflower.JPG",
+            "cabbage": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Cabbage_and_cross_section_on_white.jpg/640px-Cabbage_and_cross_section_on_white.jpg",
+            "sweet potato": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Ipomoea_batatas_006.JPG/640px-Ipomoea_batatas_006.JPG",
+            "ginger": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Ginger.jpg/640px-Ginger.jpg",
+            "garlic": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Garlic_bulbs_and_cloves.jpg/640px-Garlic_bulbs_and_cloves.jpg",
+            "lemon": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Lemon.jpg/640px-Lemon.jpg",
+            "raw banana": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Green_Bananas.jpg/640px-Green_Bananas.jpg",
+            "dondakaya (ivy gourd)": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Coccinia_grandis_fruit.jpg/640px-Coccinia_grandis_fruit.jpg",
+            "drumstick": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Moringa_oleifera_pods.jpg/640px-Moringa_oleifera_pods.jpg",
+            "spinach (palak)": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Spinacia_oleracea_Spinach.jpg/640px-Spinacia_oleracea_Spinach.jpg",
+            "coriander": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Coriander_leaves.jpg/640px-Coriander_leaves.jpg",
+            "curry leaves": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Curry_leaves_Murraya_koenigii.jpg/640px-Curry_leaves_Murraya_koenigii.jpg",
+            "mint (pudeena)": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Mint_leaves.jpg/640px-Mint_leaves.jpg",
+            "sweet corn (peeled)": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Corn_cobs.jpg/640px-Corn_cobs.jpg",
+            "baby corn": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Baby_corn_stir_fry.jpg/640px-Baby_corn_stir_fry.jpg",
+            "eggs": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Chicken_egg_2009-06-04.jpg/640px-Chicken_egg_2009-06-04.jpg",
+            "coconut": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Coconuts_at_Hainan.jpg/640px-Coconuts_at_Hainan.jpg",
+            "peeled garlic": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Garlic_bulbs_and_cloves.jpg/640px-Garlic_bulbs_and_cloves.jpg",
+            "green peas (hara matar)": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Peas_in_pods_-_Studio.jpg/640px-Peas_in_pods_-_Studio.jpg",
+            "papaya": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Papaya_cross_section_BNC.jpg/640px-Papaya_cross_section_BNC.jpg",
+            "watermelon": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg/640px-Taiwan_2009_Tainan_City_Organic_Farm_Watermelon_FRD_7962.jpg",
+            "normal banana": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Single.jpg/640px-Banana-Single.jpg",
+            "apple": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/640px-Red_Apple.jpg",
+            "pineapple": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Pineapple_and_cross_section.jpg/640px-Pineapple_and_cross_section.jpg",
+            "broccoli": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Broccoli_and_cross_section_edit.jpg/640px-Broccoli_and_cross_section_edit.jpg",
+            "zucchini": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ars_Cucumber.jpg/640px-Ars_Cucumber.jpg",
+            "lettuce iceberg": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Iceberg_lettuce_in_SB.jpg/640px-Iceberg_lettuce_in_SB.jpg",
+            "mushroom": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Champignon_mushroom.jpg/640px-Champignon_mushroom.jpg"
         };
 
         // --- AUTH LOGIC ---
@@ -236,7 +282,12 @@
                 if (activeCat !== 'All' && (!item.category || item.category !== activeCat)) return; 
 
                 let searchName = item.name.toLowerCase().trim();
-                let imageSrc = item.imageUrl || staticImages[searchName] || "";
+                let imageSrc = "";
+                if (item.imageUrl && item.imageUrl.trim() !== "") {
+                    imageSrc = item.imageUrl;
+                } else if (staticImages[searchName]) { 
+                    imageSrc = staticImages[searchName];
+                }
 
                 let imageHTML = imageSrc 
                     ? `<img src="${imageSrc}" alt="${item.name}" onerror="this.style.display='none'; this.nextElementSibling.classList.add('visible');">
@@ -250,7 +301,7 @@
                     : cartItem ? `<div class="qty-control"><button class="qty-btn" onclick="updateQty('${item.name}', -${step})">-</button><span class="qty-val">${cartItem.qty} ${item.unit}</span><button class="qty-btn" onclick="updateQty('${item.name}', ${step})">+</button></div>`
                     : `<button class="add-btn" onclick="addToCart('${item.name}', ${item.price}, '${item.unit}', ${step})">ADD +</button>`;
 
-                grid.innerHTML += `<div class="card ${!item.inStock ? 'out-stock-card' : ''}">${!item.inStock ? '<span class="badge">Sold Out</span>' : ''}${imageHTML}<div class="name">${item.name}</div><div class="unit">Price: ₹${item.price} / ${item.unit}</div>${buttonHTML}</div>`;
+                grid.innerHTML += `<div class="card ${!item.inStock ? 'out-stock-card' : ''}">${!item.inStock ? '<span class="badge">Sold Out</span>' : ''}${imageHTML}<div class="name">${item.name}</div><div class="unit">Price: \u20B9${item.price} / ${item.unit}</div>${buttonHTML}</div>`;
             });
             updateCartBar();
         }
@@ -288,7 +339,7 @@
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // --- DATABASE ORDERING LOGIC ---
+        // --- NEW BULLETPROOF ORDERING LOGIC ---
         async function submitOrder(mode) {
             let total = 0;
             const itemsArray = Object.keys(cart).map(name => {
@@ -306,6 +357,8 @@
             };
 
             try {
+                if (mode === 'UPI') document.getElementById('btn-upi').innerText = "Processing...";
+
                 const res = await fetch('/api/orders', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -313,17 +366,29 @@
                 });
                 
                 if(res.ok) {
-                    if (mode === 'UPI') {
-                        // Open UPI Link immediately
-                        const upiId = "9963169733@ybl"; 
-                        window.location.href = `upi://pay?pa=${upiId}&pn=SrinidhiVegetables&am=${orderData.totalAmount}&tn=Order`;
-                    }
-                    alert("✅ Order Placed Successfully! You can track it in 'My Orders'.");
                     cart = {}; // Empty cart
-                    closeModal('checkout-modal');
-                    renderShop();
+
+                    if (mode === 'UPI') {
+                        // Transform modal to a safe "Click to Pay" screen
+                        const upiId = "9963169733@ybl"; 
+                        const upiLink = `upi://pay?pa=${upiId}&pn=SrinidhiVegetables&am=${orderData.totalAmount}&tn=Order`;
+                        
+                        document.querySelector('#checkout-modal .modal').innerHTML = `
+                            <h2 style="color:#27ae60; margin-top:0;">✅ Order Saved!</h2>
+                            <p style="color:#555; font-size:15px;">Your order has been sent to Srinidhi Vegetables. Please complete your payment to finalize.</p>
+                            <h3 style="text-align:center; font-size:24px; color:#2c3e50;">Total: \u20B9${orderData.totalAmount}</h3>
+                            <a href="${upiLink}" style="display:block; background:#e67e22; color:white; padding:15px; text-align:center; text-decoration:none; border-radius:8px; font-size:16px; font-weight:bold; margin:20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">👉 TAP TO PAY ON GPAY / PHONEPE</a>
+                            <button onclick="location.reload()" style="width:100%; padding:12px; border:none; background:#eee; color:#333; border-radius:8px; font-weight:bold; cursor:pointer;">I have completed the payment (Close)</button>
+                        `;
+                    } else {
+                        alert("✅ Order Placed Successfully! You can track it in 'My Orders'.");
+                        location.reload(); 
+                    }
                 }
-            } catch(e) { alert("Error placing order. Please try again."); }
+            } catch(e) { 
+                alert("Error placing order. Please try again."); 
+                if (mode === 'UPI') document.getElementById('btn-upi').innerText = "⚡ Pay via UPI (GPay/PhonePe)";
+            }
         }
 
         async function openMyOrders() {
@@ -343,7 +408,7 @@
                         <div style="margin: 10px 0; font-size:14px;">
                             ${o.items.map(i => `<div>${i.name} - ${i.qty} ${i.unit}</div>`).join('')}
                         </div>
-                        <div style="font-weight:bold; color:#27ae60;">Total: ₹${o.totalAmount} (${o.paymentMode})</div>
+                        <div style="font-weight:bold; color:#27ae60;">Total: \u20B9${o.totalAmount} (${o.paymentMode})</div>
                     </div>
                 `).join('');
             } catch(e) { list.innerHTML = "Failed to load orders."; }
