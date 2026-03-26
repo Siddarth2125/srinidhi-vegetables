@@ -1,7 +1,7 @@
 {
   "name": "srinidhi-vegetables",
   "version": "1.0.0",
-  "description": "Vegetable Shop",
+  "description": "Srinidhi Fresh - Vegetable Shop",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
