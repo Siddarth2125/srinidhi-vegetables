@@ -10,17 +10,12 @@
         .header-content { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
         .top-bar { display: flex; justify-content: space-between; align-items: center; }
         h1 { margin: 0; font-size: 22px; color: #2c3e50; font-weight: 800; }
-        
-        /* User Profile Button */
         .auth-btn { background: #2c3e50; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 14px; }
-        
         .cat-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .cat-btn { background: #eef2f3; border: 1px solid #ddd; padding: 8px 16px; border-radius: 20px; white-space: nowrap; font-weight: 600; color: #555; cursor: pointer; transition: 0.2s; }
         .cat-btn.active { background: #27ae60; color: white; border-color: #27ae60; }
-
         .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
         input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
         .card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 300px; position: relative; }
         .card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background-color: #f0f0f0; display: block; }
@@ -29,23 +24,16 @@
         .name { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 4px; height: 40px; overflow: hidden; line-height: 1.3; }
         .unit { font-size: 12px; color: #777; font-weight: 500; margin-bottom: 4px; }
         .price { color: #27ae60; font-size: 17px; font-weight: 800; margin-bottom: 10px; }
-
         .add-btn { background: white; color: #27ae60; border: 2px solid #27ae60; padding: 6px; width: 100%; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; text-transform: uppercase; }
         .qty-control { display: flex; align-items: center; justify-content: space-between; border: 2px solid #27ae60; border-radius: 6px; overflow: hidden; }
         .qty-btn { background: #27ae60; color: white; border: none; padding: 6px 12px; font-weight: bold; cursor: pointer; font-size: 18px; width: 35px; }
         .qty-val { font-weight: 800; color: #27ae60; font-size: 14px; }
-
         .out-stock-card { opacity: 0.6; pointer-events: none; }
         .out-stock-card img, .out-stock-card .placeholder-box { filter: grayscale(100%); }
         .badge { background: #e74c3c; color: white; padding: 4px 8px; font-size: 10px; border-radius: 4px; position: absolute; top: 10px; right: 10px; font-weight: bold; z-index: 10; }
-
         .cart-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background-color: #27ae60; color: white; padding: 12px 20px; border-radius: 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 200; display: none; cursor: pointer; }
         .cart-total { font-weight: 800; font-size: 18px; }
-
-        /* Floating Customer Care */
         .float-wa { position: fixed; bottom: 20px; left: 20px; background-color: #25D366; color: white; padding: 12px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 200; display: flex; align-items: center; gap: 5px; font-size: 14px; }
-
-        /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; display: none; align-items: center; justify-content: center; }
         .modal { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 85vh; overflow-y: auto; position: relative; }
         .close-modal { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #aaa; }
@@ -54,13 +42,12 @@
         .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
         .pay-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; margin-bottom: 10px; color: white; background: #27ae60; }
         .pay-btn.cod { background: #2c3e50; }
-
-        /* Order History Styles */
         .order-card { border: 1px solid #eee; padding: 15px; border-radius: 10px; margin-bottom: 15px; background: #fdfdfd; }
         .order-status { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
         .status-Pending { background: #f39c12; color: white; }
         .status-Packed { background: #3498db; color: white; }
         .status-Delivered { background: #27ae60; color: white; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
 <body>
@@ -69,7 +56,7 @@
         <div class="header-content">
             <div class="top-bar">
                 <h1><span id="header-emoji"></span> Srinidhi Vegetables</h1>
-                <button class="auth-btn" id="auth-btn" onclick="openLoginModal()">Login</button>
+                <button class="auth-btn" id="auth-btn" onclick="openLoginModal()">My Profile</button>
             </div>
             <div class="cat-scroll">
                 <button class="cat-btn active" onclick="filterCat('All')">All</button>
@@ -90,27 +77,19 @@
 
     <div id="cart-bar" class="cart-bar" onclick="openCheckoutModal()">
         <div><span id="item-count">0</span> Items</div>
-        <div class="cart-total">Place Order <span class="rupee-symbol"></span><span id="total-price">0</span> ></div>
+        <div class="cart-total">Checkout <span class="rupee-symbol"></span><span id="total-price">0</span> ></div>
     </div>
 
     <div id="login-modal" class="modal-overlay">
         <div class="modal">
             <span class="close-modal" onclick="closeModal('login-modal')">&times;</span>
-            <h2>Sign In / Register</h2>
-            <p style="font-size: 14px; color: #666;">Create an account to save your address and track orders.</p>
-            <div class="form-group">
-                <label>Mobile Number (10 digits)</label>
-                <input type="tel" id="reg-phone" placeholder="Enter mobile number">
-            </div>
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" id="reg-name" placeholder="Enter your name">
-            </div>
-            <div class="form-group">
-                <label>Delivery Address</label>
-                <textarea id="reg-address" rows="3" placeholder="House No, Area, Landmark"></textarea>
-            </div>
-            <button class="pay-btn" onclick="handleLogin()">Save & Continue</button>
+            <h2>My Profile Details</h2>
+            <p style="font-size: 14px; color: #666;">We will save this so you never have to type it again!</p>
+            <div class="form-group"><label>Email Address</label><input type="email" id="reg-email" placeholder="Enter your email"></div>
+            <div class="form-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="Enter your name"></div>
+            <div class="form-group"><label>Mobile Number (10 digits)</label><input type="tel" id="reg-phone" placeholder="Enter mobile number"></div>
+            <div class="form-group"><label>Delivery Address</label><textarea id="reg-address" rows="3" placeholder="House No, Area, Landmark"></textarea></div>
+            <button class="pay-btn" onclick="handleLogin()">Save My Details</button>
         </div>
     </div>
 
@@ -118,15 +97,22 @@
         <div class="modal">
             <span class="close-modal" onclick="closeModal('checkout-modal')">&times;</span>
             <h2>Confirm Order 🛒</h2>
-            <div style="background: #eef2f3; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 14px;">
-                <strong>Deliver To:</strong><br>
-                <span id="confirm-name"></span> (<span id="confirm-phone"></span>)<br>
-                <span id="confirm-address"></span><br>
-                <a href="#" onclick="closeModal('checkout-modal'); openLoginModal();" style="color: #2980b9;">Change Address</a>
+            <div style="background: #eef2f3; padding: 15px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; border: 1px solid #ddd;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <strong style="color: #2c3e50;">Deliver To:</strong>
+                    <a href="#" onclick="closeModal('checkout-modal'); openLoginModal();" style="color: #2980b9; text-decoration: none; font-weight: bold;">✏️ Edit Details</a>
+                </div>
+                <div style="color: #444;">
+                    <span id="confirm-name"></span><br><span id="confirm-phone"></span><br>
+                    <span id="confirm-email" style="font-style: italic;"></span><br><span id="confirm-address"></span>
+                </div>
             </div>
             <p><strong>Total Bill: <span class="rupee-symbol"></span><span id="modal-total">0</span></strong></p>
-            <button class="pay-btn" id="btn-upi" onclick="submitOrder('UPI')">⚡ Pay via UPI (GPay/PhonePe)</button>
-            <button class="pay-btn cod" onclick="submitOrder('COD')">💵 Cash on Delivery</button>
+            
+            <div id="payment-buttons">
+                <button class="pay-btn" id="btn-upi" onclick="showUPIScreen()">⚡ Pay via UPI (GPay/PhonePe)</button>
+                <button class="pay-btn cod" onclick="finalizeOrder('COD')">💵 Cash on Delivery</button>
+            </div>
         </div>
     </div>
 
@@ -134,125 +120,85 @@
         <div class="modal" style="max-width: 500px;">
             <span class="close-modal" onclick="closeModal('orders-modal')">&times;</span>
             <h2>My Orders</h2>
-            <button onclick="logout()" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; float: right; margin-top: -40px;">Logout</button>
+            <button onclick="logout()" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; float: right; margin-top: -40px;">Logout / Reset</button>
             <div id="orders-list" style="margin-top: 20px;">Loading orders...</div>
         </div>
     </div>
     
     <script>
-        // Inject safe Emojis
-        document.getElementById('header-emoji').innerText = '\uD83E\uDD66'; // Broccoli
-        document.querySelectorAll('.rupee-symbol').forEach(el => el.innerText = '\u20B9'); // Rupee
+        document.getElementById('header-emoji').innerText = '\uD83E\uDD66'; 
+        document.querySelectorAll('.rupee-symbol').forEach(el => el.innerText = '\u20B9'); 
 
         let products = [];
         let cart = {}; 
         let activeCat = 'All';
         let currentUser = JSON.parse(localStorage.getItem('srinidhiUser')) || null;
 
-        // Image Master List
         const staticImages = {
             "tomato": "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-            "bangalore tomato": "https://m.media-amazon.com/images/I/71jG9IBb+rL._SX679_.jpg",
             "onion": "https://upload.wikimedia.org/wikipedia/commons/2/25/Onion_on_White.JPG",
             "potato": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Patates.jpg",
-            "new potato": "https://m.media-amazon.com/images/I/61ntetAizEL._SX679_.jpg",
-            "green chillies": "https://www.bbassets.com/media/uploads/p/l/50000511_10-fresho-chilli-green-organically-grown.jpg",
-            "brinjal black": "https://m.media-amazon.com/images/I/41s-VZbumXL.jpg",
-            "brinjal white": "https://m.media-amazon.com/images/I/51cIoaCCf6L._SX679_.jpg",
-            "brinjal long": "https://m.media-amazon.com/images/I/61JUFWKdliL._SX679_.jpg",
-            "lady finger": "https://m.media-amazon.com/images/I/31qgGAmYXKL._SX300_SY300_QL70_FMwebp_.jpg",
-            "bottle gourd": "https://m.media-amazon.com/images/I/51155xEWpGL.jpg",
-            "ridge gourd": "https://m.media-amazon.com/images/I/61-pNFV+KSL._SX679_.jpg",
-            "bitter gourd": "https://www.bbassets.com/media/uploads/p/l/20000729_16-fresho-bitter-gourd-forest.jpg",
-            "snake gourd": "https://m.media-amazon.com/images/I/51cGCpGOmVL.jpg",
-            "cucumber (keera)": "https://m.media-amazon.com/images/I/71xkI-PIE5L._SX679_PIbundle-2,TopRight,0,0_SX679SY493SH20_.jpg",
-            "capsicum green": "https://m.media-amazon.com/images/I/71UbN9-gk8L._SX679_.jpg",
-            "capsicum red": "https://m.media-amazon.com/images/I/31kA4Qy7q0S._SY300_SX300_QL70_FMwebp_.jpg",
-            "capsicum yellow": "https://m.media-amazon.com/images/I/61LtOXKHvuL._SX679_.jpg",
-            "radish": "https://m.media-amazon.com/images/I/517LlhycGUL.jpg",
             "carrot": "https://www.bbassets.com/media/uploads/p/l/40022634_7-fresho-carrot-organically-grown.jpg",
-            "red carrot": "https://m.media-amazon.com/images/I/613sCMxt3tL._SX679_.jpg",
-            "beetroot": "https://m.media-amazon.com/images/I/71XsyPm+xZL.jpg",
-            "cauliflower": "https://m.media-amazon.com/images/I/91EdPVzD99L._AC_UF1000,1000_QL80_.jpg",
-            "cabbage": "https://m.media-amazon.com/images/I/61cs7sVQCJL._AC_UF350,350_QL80_.jpg",
-            "sweet potato": "https://m.media-amazon.com/images/I/81M2Cj2BA1L.jpg",
-            "ginger": "https://m.media-amazon.com/images/I/61hin4-KL1L._AC_UF894,1000_QL80_.jpg",
-            "garlic": "https://m.media-amazon.com/images/I/71KmgOL2q4L.jpg",
-            "lemon": "https://m.media-amazon.com/images/I/61wl85nUOUL._AC_UF894,1000_QL80_.jpg",
-            "raw banana": "https://m.media-amazon.com/images/I/61K7bhNJsgL.jpg",
-            "dondakaya (ivy gourd)": "https://freshfarmse.com/wp-content/uploads/2025/04/Ivy-Gourd-PNG-HD-Quality.png",
-            "drumstick": "https://5.imimg.com/data5/EQ/LA/JW/SELLER-52718678/green-drumstick-500x500.jpg",
-            "spinach (palak)": "https://m.media-amazon.com/images/I/51T3025eGcL._AC_UF894,1000_QL80_.jpg",
-            "coriander": "https://m.media-amazon.com/images/I/71pbtRs3UQL._AC_UF894,1000_QL80_.jpg",
-            "curry leaves": "https://m.media-amazon.com/images/I/71KHkFkPO+L._AC_UF894,1000_QL80_.jpg",
-            "mint (pudeena)": "https://m.media-amazon.com/images/I/61CSxdsG8wL._AC_UF1000,1000_QL80_.jpg",
-            "sweet corn (peeled)": "https://5.imimg.com/data5/SELLER/Default/2021/9/WU/RD/FB/136741020/peeled-sweet-corn.jpg",
-            "baby corn": "https://m.media-amazon.com/images/I/51zVFCwztXL.jpg",
-            "eggs": "https://m.media-amazon.com/images/I/712Bjx8MJKL._AC_UF894,1000_QL80_.jpg",
-            "coconut": "https://m.media-amazon.com/images/I/61THuQWrAZL._AC_UF894,1000_QL80_.jpg",
-            "peeled garlic": "https://m.media-amazon.com/images/I/617cdTizHdL.jpg",
-            "green peas (hara matar)": "https://m.media-amazon.com/images/I/612O377T9FL._SX679_.jpg",
-            "papaya": "https://m.media-amazon.com/images/I/61CuiyI4aBL._SX679_.jpg",
-            "watermelon": "https://m.media-amazon.com/images/I/61r5l3+Ml7L.jpg",
-            "normal banana": "https://m.media-amazon.com/images/I/51ebZJ+DR4L._AC_UF894,1000_QL80_.jpg",
-            "apple": "https://www.bbassets.com/media/uploads/p/l/40319252_3-fresho-apple-red-delicious.jpg",
-            "pineapple": "https://m.media-amazon.com/images/I/81XA2GQIPOL.jpg",
-            "broccoli": "https://m.media-amazon.com/images/I/61lxGX909uL._AC_UF894,1000_QL80_.jpg",
-            "zucchini": "https://www.bbassets.com/media/uploads/p/l/10000211_17-fresho-zucchini-yellow.jpg",
-            "lettuce iceberg": "https://www.bbassets.com/media/uploads/p/l/10000132_18-fresho-lettuce-iceberg.jpg",
-            "mushroom": "https://5.imimg.com/data5/ANDROID/Default/2021/7/EC/NL/ZO/64531483/prod-20210713-1651572948365688504507811-jpg.jpg"
+            "apple": "https://www.bbassets.com/media/uploads/p/l/40319252_3-fresho-apple-red-delicious.jpg"
         };
 
-        // --- AUTH LOGIC ---
         function checkAuthUI() {
             const authBtn = document.getElementById('auth-btn');
             if (currentUser) {
-                authBtn.innerText = "👤 My Orders";
+                authBtn.innerText = "👤 My Orders & Profile";
                 authBtn.onclick = openMyOrders;
             } else {
-                authBtn.innerText = "Login";
+                authBtn.innerText = "Sign In / Profile";
                 authBtn.onclick = openLoginModal;
             }
         }
 
         function openLoginModal() {
             if (currentUser) {
-                document.getElementById('reg-phone').value = currentUser.phone;
-                document.getElementById('reg-name').value = currentUser.name;
-                document.getElementById('reg-address').value = currentUser.address;
+                document.getElementById('reg-email').value = currentUser.email || '';
+                document.getElementById('reg-name').value = currentUser.name || '';
+                document.getElementById('reg-phone').value = currentUser.phone || '';
+                document.getElementById('reg-address').value = currentUser.address || '';
             }
             document.getElementById('login-modal').style.display = 'flex';
         }
 
         async function handleLogin() {
-            const phone = document.getElementById('reg-phone').value;
+            const email = document.getElementById('reg-email').value;
             const name = document.getElementById('reg-name').value;
+            const phone = document.getElementById('reg-phone').value;
             const address = document.getElementById('reg-address').value;
-            if(!phone || !name || !address) { alert("Please fill all details!"); return; }
+            
+            if(!email || !phone || !name || !address) { alert("Please fill all details!"); return; }
 
             try {
                 const res = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone, name, address })
+                    body: JSON.stringify({ phone, name, address, email })
                 });
+                
                 const data = await res.json();
-                localStorage.setItem('srinidhiUser', JSON.stringify(data.user));
-                currentUser = data.user;
+                const finalUserData = { ...data.user, email: email, name: name, phone: phone, address: address };
+                localStorage.setItem('srinidhiUser', JSON.stringify(finalUserData));
+                currentUser = finalUserData;
+                
                 checkAuthUI();
                 closeModal('login-modal');
-                alert("Profile Saved!");
+                alert("✅ Profile details saved successfully!");
             } catch(e) { alert("Error saving profile"); }
         }
 
         function logout() {
-            localStorage.removeItem('srinidhiUser');
-            currentUser = null;
-            checkAuthUI();
-            closeModal('orders-modal');
+            if(confirm("Are you sure you want to clear your saved details?")) {
+                localStorage.removeItem('srinidhiUser');
+                currentUser = null;
+                checkAuthUI();
+                closeModal('orders-modal');
+                alert("Details cleared.");
+            }
         }
 
-        // --- SHOP & CART LOGIC ---
         async function loadData() {
             checkAuthUI();
             try { 
@@ -282,12 +228,7 @@
                 if (activeCat !== 'All' && (!item.category || item.category !== activeCat)) return; 
 
                 let searchName = item.name.toLowerCase().trim();
-                let imageSrc = "";
-                if (item.imageUrl && item.imageUrl.trim() !== "" && !item.imageUrl.includes("placehold.co")) {
-                    imageSrc = item.imageUrl;
-                } else if (staticImages[searchName]) { 
-                    imageSrc = staticImages[searchName];
-                }
+                let imageSrc = item.imageUrl && item.imageUrl.trim() !== "" && !item.imageUrl.includes("placehold.co") ? item.imageUrl : staticImages[searchName] || "";
 
                 let imageHTML = imageSrc 
                     ? `<img src="${imageSrc}" alt="${item.name}" onerror="this.style.display='none'; this.nextElementSibling.classList.add('visible');">
@@ -328,19 +269,71 @@
 
         function openCheckoutModal() {
             if(!currentUser) {
+                alert("Please fill in your Profile/Delivery details first!");
                 openLoginModal();
                 return;
             }
-            document.getElementById('confirm-name').innerText = currentUser.name;
-            document.getElementById('confirm-phone').innerText = currentUser.phone;
-            document.getElementById('confirm-address').innerText = currentUser.address;
+            
+            document.getElementById('confirm-name').innerText = currentUser.name || '';
+            document.getElementById('confirm-phone').innerText = "📞 " + (currentUser.phone || '');
+            document.getElementById('confirm-email').innerText = "✉️ " + (currentUser.email || '');
+            document.getElementById('confirm-address').innerText = "🏠 " + (currentUser.address || '');
+            
+            // Reset buttons to default state when reopening modal
+            document.getElementById('payment-buttons').innerHTML = `
+                <button class="pay-btn" id="btn-upi" onclick="showUPIScreen()">⚡ Pay via UPI (GPay/PhonePe)</button>
+                <button class="pay-btn cod" onclick="finalizeOrder('COD')">💵 Cash on Delivery</button>
+            `;
+            
             document.getElementById('checkout-modal').style.display = 'flex';
         }
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // --- NEW BULLETPROOF ORDERING LOGIC ---
-        async function submitOrder(mode) {
+        // --- STEP 1: Show the QR Code and UTR Input safely ---
+        function showUPIScreen() {
+            let total = parseInt(document.getElementById('modal-total').innerText);
+            const upiId = "9963169733@ybl"; 
+            const upiLink = `upi://pay?pa=${upiId}&pn=SrinidhiVegetables&am=${total}&tn=Order`;
+            const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`;
+            
+            document.getElementById('payment-buttons').innerHTML = `
+                <div style="background: #eef2f3; padding: 15px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+                    <h3 style="text-align:center; color:#27ae60; margin-top:0;">Scan & Pay</h3>
+                    <div style="text-align:center; margin: 10px 0;">
+                        <img src="${qrCodeUrl}" alt="UPI QR Code" style="border: 2px solid #ccc; border-radius: 8px; padding: 5px; background: white; width: 150px; height: 150px;">
+                    </div>
+                    <a href="${upiLink}" style="display:block; background:#e67e22; color:white; padding:10px; text-align:center; text-decoration:none; border-radius:8px; font-size:14px; font-weight:bold; margin-bottom:15px;">👉 TAP TO PAY ON MOBILE APP</a>
+                    <div style="background: #fff3e0; padding: 10px; border-radius: 8px; border: 1px solid #ffe0b2;">
+                        <label style="font-weight:bold; color:#d35400; font-size:13px;">Enter 12-Digit UPI Reference No. (UTR):</label>
+                        <input type="number" id="utr-input" placeholder="e.g., 312456789012" style="width:100%; padding:10px; margin-top:8px; border:1px solid #ddd; border-radius:5px; font-weight:bold; letter-spacing: 1px;">
+                    </div>
+                </div>
+                <button id="verify-btn" onclick="finalizeOrder('UPI')" style="width:100%; padding:12px; border:none; background:#27ae60; color:white; border-radius:8px; font-weight:bold; cursor:pointer; font-size:16px;">Verify & Place Order ✅</button>
+                <button onclick="openCheckoutModal()" style="width:100%; padding:10px; border:none; background:none; color:#777; margin-top:5px; cursor:pointer; text-decoration:underline;">Cancel</button>
+            `;
+        }
+
+        // --- STEP 2: Submit to the Database safely ---
+        async function finalizeOrder(mode) {
+            let finalPaymentMode = mode;
+            
+            // Check UTR if they selected UPI
+            if (mode === 'UPI') {
+                const utrInput = document.getElementById('utr-input');
+                const utrValue = utrInput ? utrInput.value.trim() : "";
+                
+                if (utrValue.length < 10) {
+                    alert("Please enter a valid 12-digit UPI Reference / UTR Number from your payment app!");
+                    return;
+                }
+                finalPaymentMode = `UPI (UTR: ${utrValue})`;
+                document.getElementById('verify-btn').innerText = "Processing...";
+            } else {
+                // If COD
+                document.querySelector('.pay-btn.cod').innerText = "Processing...";
+            }
+
             let total = 0;
             const itemsArray = Object.keys(cart).map(name => {
                 total += cart[name].qty * cart[name].price;
@@ -353,12 +346,10 @@
                 customerAddress: currentUser.address,
                 items: itemsArray,
                 totalAmount: Math.round(total),
-                paymentMode: mode
+                paymentMode: finalPaymentMode
             };
 
             try {
-                if (mode === 'UPI') document.getElementById('btn-upi').innerText = "Processing...";
-
                 const res = await fetch('/api/orders', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -366,28 +357,15 @@
                 });
                 
                 if(res.ok) {
-                    cart = {}; // Empty cart
-
-                    if (mode === 'UPI') {
-                        // Transform modal to a safe "Click to Pay" screen
-                        const upiId = "9963169733@ybl"; 
-                        const upiLink = `upi://pay?pa=${upiId}&pn=SrinidhiVegetables&am=${orderData.totalAmount}&tn=Order`;
-                        
-                        document.querySelector('#checkout-modal .modal').innerHTML = `
-                            <h2 style="color:#27ae60; margin-top:0;">✅ Order Saved!</h2>
-                            <p style="color:#555; font-size:15px;">Your order has been sent to Srinidhi Vegetables. Please complete your payment to finalize.</p>
-                            <h3 style="text-align:center; font-size:24px; color:#2c3e50;">Total: \u20B9${orderData.totalAmount}</h3>
-                            <a href="${upiLink}" style="display:block; background:#e67e22; color:white; padding:15px; text-align:center; text-decoration:none; border-radius:8px; font-size:16px; font-weight:bold; margin:20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">👉 TAP TO PAY ON GPAY / PHONEPE</a>
-                            <button onclick="location.reload()" style="width:100%; padding:12px; border:none; background:#eee; color:#333; border-radius:8px; font-weight:bold; cursor:pointer;">I have completed the payment (Close)</button>
-                        `;
-                    } else {
-                        alert("✅ Order Placed Successfully! You can track it in 'My Orders'.");
-                        location.reload(); 
-                    }
+                    cart = {}; 
+                    alert("✅ Order Placed Successfully! You can track it in 'My Orders'.");
+                    location.reload(); 
+                } else {
+                    alert("Failed to save order in the database.");
                 }
             } catch(e) { 
                 alert("Error placing order. Please try again."); 
-                if (mode === 'UPI') document.getElementById('btn-upi').innerText = "⚡ Pay via UPI (GPay/PhonePe)";
+                openCheckoutModal(); // Resets the buttons if it fails
             }
         }
 
