@@ -6,47 +6,47 @@
     <title>Admin Dashboard - Srinidhi Retail</title>
     <style>
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f4f6f8; display: flex; height: 100vh; overflow: hidden; }
-        
         .sidebar { width: 260px; background: #2c3e50; color: white; display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10; }
         .sidebar h2 { padding: 20px; margin: 0; font-size: 20px; border-bottom: 1px solid #34495e; color: #fff; display: flex; align-items: center; gap: 10px; }
         .nav-btn { padding: 18px 20px; background: none; border: none; color: #bdc3c7; text-align: left; font-size: 16px; cursor: pointer; transition: 0.2s; font-weight: 500; }
         .nav-btn:hover { background: #34495e; color: white; }
         .nav-btn.active { color: #2ecc71; border-left: 5px solid #2ecc71; background: #34495e; font-weight: bold; }
-        
         .main-content { flex: 1; padding: 30px; overflow-y: auto; }
         .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .header-bar h1 { margin: 0; color: #2c3e50; font-size: 28px; }
         .btn-store { background: white; border: 1px solid #ccc; padding: 8px 15px; border-radius: 20px; text-decoration: none; color: #333; font-weight: bold; font-size: 14px; }
-        .btn-store:hover { background: #eee; }
-        
         .section { display: none; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .section.active { display: block; }
         
-        /* Dashboard Stats Cards */
+        /* Dashboard Stats */
         .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
         .stat-card { padding: 25px; border-radius: 10px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .stat-card h3 { margin: 0 0 10px 0; font-size: 16px; opacity: 0.9; }
         .stat-card h2 { margin: 0; font-size: 32px; }
 
-        /* Inventory Table */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 15px 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; color: #555; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .img-preview { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; }
+        /* Editable Inventory Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #eee; vertical-align: middle; }
+        th { background: #f8f9fa; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .img-preview { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid #ddd; }
+        
+        /* Inline Inputs */
+        .inline-select, .inline-input { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 13px; width: 100%; box-sizing: border-box; }
+        .inline-input:focus, .inline-select:focus { border-color: #27ae60; outline: none; }
+        .stock-label { display: flex; align-items: center; gap: 5px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        .btn-del { background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-add { background: #27ae60; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px; }
-        .btn-add:hover { background: #219150; }
-        .btn-del { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         
         /* Orders */
         .order-card { border: 1px solid #eee; padding: 20px; border-radius: 10px; margin-bottom: 15px; background: #fafafa; }
         .status-select { padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-weight: bold; cursor: pointer; }
 
-        /* Pop-up Modal */
+        /* Modal */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal { background: white; padding: 30px; border-radius: 12px; width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal { background: white; padding: 30px; border-radius: 12px; width: 400px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #444; font-size: 14px; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
         .btn-save { width: 100%; background: #27ae60; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 16px; }
         .close-btn { float: right; cursor: pointer; color: #e74c3c; font-weight: bold; }
     </style>
@@ -69,16 +69,13 @@
         <div id="dashboard-sec" class="section active">
             <div class="stat-grid">
                 <div class="stat-card" style="background: linear-gradient(135deg, #3498db, #2980b9);">
-                    <h3>Total Orders</h3>
-                    <h2 id="dash-orders">0</h2>
+                    <h3>Total Orders</h3><h2 id="dash-orders">0</h2>
                 </div>
                 <div class="stat-card" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
-                    <h3>Total Revenue</h3>
-                    <h2 id="dash-revenue">₹0</h2>
+                    <h3>Total Revenue</h3><h2 id="dash-revenue">₹0</h2>
                 </div>
                 <div class="stat-card" style="background: linear-gradient(135deg, #e67e22, #d35400);">
-                    <h3>Total Products</h3>
-                    <h2 id="dash-products">0</h2>
+                    <h3>Total Products</h3><h2 id="dash-products">0</h2>
                 </div>
             </div>
             <p style="margin-top: 20px; color: #777;">Welcome to your admin control panel. Use the sidebar to manage your store.</p>
@@ -96,16 +93,17 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Image</th>
-                        <th>Product</th>
-                        <th>Category</th>
-                        <th>Price (₹)</th>
-                        <th>Unit Type</th>
-                        <th>Action</th>
+                        <th style="width: 20%;">Product</th>
+                        <th style="width: 15%;">Category</th>
+                        <th style="width: 15%;">Unit Type</th>
+                        <th style="width: 10%;">Price (₹)</th>
+                        <th style="width: 20%;">Image Link (URL)</th>
+                        <th style="width: 15%;">Stock</th>
+                        <th style="width: 5%;">Action</th>
                     </tr>
                 </thead>
                 <tbody id="inv-tbody">
-                    <tr><td colspan="6">Loading inventory...</td></tr>
+                    <tr><td colspan="7">Loading inventory...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -137,12 +135,96 @@
             document.getElementById('page-title').innerText = btn.innerText.replace(/[^\w\s]/gi, '').trim();
         }
 
+        // --- LIVE INVENTORY EDITING LOGIC ---
+        async function loadInventory() {
+            try {
+                const res = await fetch('/api/vegetables');
+                inventory = await res.json();
+                inventory.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+                document.getElementById('dash-products').innerText = inventory.length;
+                renderInventory();
+            } catch(e) { console.error(e); }
+        }
+
+        function renderInventory() {
+            const term = document.getElementById('search-inv').value.toLowerCase();
+            const tbody = document.getElementById('inv-tbody');
+            tbody.innerHTML = '';
+            
+            if (inventory.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 20px; color: #777;">Your inventory is empty. Click "Add New Vegetable" to start!</td></tr>`;
+                return;
+            }
+
+            inventory.forEach(item => {
+                if (!String(item.name).toLowerCase().includes(term)) return;
+                let img = item.imageUrl || `https://placehold.co/100x100/e8f5e9/1b5e20.png?text=${encodeURIComponent(item.name)}`;
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <img src="${img}" class="img-preview">
+                                <strong style="color: #2c3e50;">${item.name}</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <select class="inline-select" onchange="autoSave('${item._id}', 'category', this.value)">
+                                <option value="Vegetable" ${item.category==='Vegetable'?'selected':''}>Vegetable</option>
+                                <option value="Fruit" ${item.category==='Fruit'?'selected':''}>Fruit</option>
+                                <option value="Leafy" ${item.category==='Leafy'?'selected':''}>Leafy</option>
+                                <option value="Premium" ${item.category==='Premium'?'selected':''}>Premium</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="inline-select" onchange="autoSave('${item._id}', 'unit', this.value)">
+                                <option value="kg" ${item.unit==='kg'?'selected':''}>kg</option>
+                                <option value="each" ${item.unit==='each'?'selected':''}>each</option>
+                                <option value="bunch" ${item.unit==='bunch'?'selected':''}>bunch</option>
+                                <option value="pack" ${item.unit==='pack'?'selected':''}>pack</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" class="inline-input" value="${item.price}" onchange="autoSave('${item._id}', 'price', this.value)">
+                        </td>
+                        <td>
+                            <input type="text" class="inline-input" value="${item.imageUrl || ''}" placeholder="https://..." onchange="autoSave('${item._id}', 'imageUrl', this.value)">
+                        </td>
+                        <td>
+                            <label class="stock-label" style="color: ${item.inStock !== false ? '#27ae60' : '#e74c3c'};">
+                                <input type="checkbox" ${item.inStock !== false ? 'checked' : ''} onchange="autoSave('${item._id}', 'inStock', this.checked)">
+                                ${item.inStock !== false ? '✓ In Stock' : '✗ Sold Out'}
+                            </label>
+                        </td>
+                        <td><button class="btn-del" onclick="deleteItem('${item._id}')">🗑️</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Magic Auto-Save Function
+        async function autoSave(id, field, value) {
+            const bodyData = {};
+            bodyData[field] = value;
+            try {
+                await fetch(`/api/vegetables/${id}`, {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(bodyData)
+                });
+                // Update local memory so we don't have to reload the whole page
+                const item = inventory.find(i => i._id === id);
+                if (item) item[field] = value;
+                if (field === 'imageUrl' || field === 'inStock') renderInventory(); // Only re-draw if image or stock changes
+            } catch(e) { alert("Error saving change!"); }
+        }
+
+        // --- ORDERS LOGIC ---
         async function loadOrders() {
             try {
                 const res = await fetch('/api/admin/orders');
                 const orders = await res.json();
                 
-                // Update Dashboard Stats!
                 document.getElementById('dash-orders').innerText = orders.length;
                 let totalRev = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
                 document.getElementById('dash-revenue').innerText = "₹" + totalRev;
@@ -181,44 +263,6 @@
             loadOrders(); 
         }
 
-        async function loadInventory() {
-            try {
-                const res = await fetch('/api/vegetables');
-                inventory = await res.json();
-                
-                // Update Dashboard Stat!
-                document.getElementById('dash-products').innerText = inventory.length;
-
-                renderInventory();
-            } catch(e) { console.error(e); }
-        }
-
-        function renderInventory() {
-            const term = document.getElementById('search-inv').value.toLowerCase();
-            const tbody = document.getElementById('inv-tbody');
-            tbody.innerHTML = '';
-            
-            if (inventory.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 20px; color: #777;">Your inventory is empty. Click "Add New Vegetable" to start!</td></tr>`;
-                return;
-            }
-
-            inventory.forEach(item => {
-                if (!item.name.toLowerCase().includes(term)) return;
-                let img = item.imageUrl || `https://placehold.co/100x100?text=${item.name}`;
-                tbody.innerHTML += `
-                    <tr>
-                        <td><img src="${img}" class="img-preview"></td>
-                        <td style="font-weight:bold; color: #333;">${item.name}</td>
-                        <td>${item.category || 'Vegetable'}</td>
-                        <td style="font-weight:bold; color: #27ae60;">₹${item.price}</td>
-                        <td style="color: #777;">${item.unit}</td>
-                        <td><button class="btn-del" onclick="deleteItem('${item._id}')">Delete</button></td>
-                    </tr>
-                `;
-            });
-        }
-
         function openModal() { document.getElementById('addModal').style.display = 'flex'; }
         function closeModal() { document.getElementById('addModal').style.display = 'none'; }
 
@@ -233,13 +277,9 @@
                 inStock: true
             };
             
-            await fetch('/api/vegetables', { 
-                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(newItem) 
-            });
-            
+            await fetch('/api/vegetables', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(newItem) });
             closeModal();
             loadInventory(); 
-            alert("🎉 Item Added to Store!");
         }
 
         async function deleteItem(id) {

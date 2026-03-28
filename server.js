@@ -36,7 +36,6 @@ app.get("/api/vegetables", async (req, res) => {
     catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// 🌟 NEW: Add a Brand New Item
 app.post("/api/vegetables", async (req, res) => {
     try {
         const newItem = new Vegetable(req.body);
@@ -45,7 +44,14 @@ app.post("/api/vegetables", async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// 🌟 NEW: Delete an Item
+// 🌟 NEW: This route allows your editable table dropdowns to save to the database!
+app.patch("/api/vegetables/:id", async (req, res) => {
+    try {
+        await Vegetable.findByIdAndUpdate(req.params.id, req.body);
+        res.json({ message: "Item updated successfully!" });
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.delete("/api/vegetables/:id", async (req, res) => {
     try {
         await Vegetable.findByIdAndDelete(req.params.id);
