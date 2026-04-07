@@ -26,7 +26,7 @@ const User = mongoose.model("User", new mongoose.Schema({
 
 const Order = mongoose.model("Order", new mongoose.Schema({
   customerName: String, customerPhone: String, customerAddress: String, items: Array,
-  totalAmount: Number, paymentMode: String, status: { type: String, default: 'Pending' },
+  totalAmount: Number, paymentMode: String, transactionId: String, status: { type: String, default: 'Pending' },
   orderDate: { type: Date, default: Date.now }
 }));
 
@@ -44,7 +44,6 @@ app.post("/api/vegetables", async (req, res) => {
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// 🌟 NEW: This route allows your editable table dropdowns to save to the database!
 app.patch("/api/vegetables/:id", async (req, res) => {
     try {
         await Vegetable.findByIdAndUpdate(req.params.id, req.body);
