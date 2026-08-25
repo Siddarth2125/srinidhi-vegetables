@@ -9,7 +9,7 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(cors());
 
-const MONGO_URI = "mongodb+srv://siddarth:siddarth@cluster0.r3pfzhf.mongodb.net/vegetableShop";
+const MONGO_URI = "mongodb+srv://siddarthdonthramoni_db_user:iJKVE8OMoIVDHX1B@cluster0.sjzkveh.mongodb.net/vegetableShop?appName=Cluster0";
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected Successfully!"))
